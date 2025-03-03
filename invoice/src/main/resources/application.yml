@@ -1,0 +1,65 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: "invoice"
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/invoicedb
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  flyway:
+    locations: /db/migration
+    sql-migration-suffixes: .sql
+    url: jdbc:mysql://localhost:3306/invoicedb
+    user: root
+    password: root
+    baseline-version: 0.0
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    open-in-view: false
+    properties:
+      hibernate:
+        type.preferred_uuid_jdbc_type: VARCHAR
+        format_sql: true
+    show-sql: true
+  config:
+    #import: "optional:configserver:http://localhost:8071/"
+    import:
+      - "application_qa.yml"
+      - "application_prod.yml"
+    profiles:
+      active:
+        - "default"
+  rabbitmq:
+    host: "localhost"
+    port: 5672
+    username: "guest"
+    password: "guest"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+build:
+  version: "3.0"
+
+
+invoice:
+  message: "Welcome to Apettigrew accounts related local APIs "
+  contactDetails:
+    name: "Thomas A. Anderson - Developer"
+    email: "neo@matrix.com"
+  onCallSupport:
+    - (444) 444-7890
+    - (444) 234-4560

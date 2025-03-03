@@ -1,0 +1,118 @@
+package com.apettigrew.invoice.controllers;
+
+
+import com.apettigrew.invoice.ResourceTypes;
+import com.apettigrew.invoice.dtos.ContactInfoDto;
+import com.apettigrew.invoice.dtos.InvoiceDto;
+import com.apettigrew.invoice.entities.Invoice;
+import com.apettigrew.invoice.enums.InvoiceStatus;
+import com.apettigrew.invoice.jsonapi.InvoiceResource;
+import com.apettigrew.invoice.jsonapi.JsonApiConstants;
+import com.apettigrew.invoice.jsonapi.MultipleResourceResponse;
+import com.apettigrew.invoice.jsonapi.SingleResourceResponse;
+import com.apettigrew.invoice.jsonapi.requests.CreateRequest;
+import com.apettigrew.invoice.jsonapi.requests.InvoiceCreateRequest;
+import com.apettigrew.invoice.jsonapi.requests.UpdateRequest;
+import com.apettigrew.invoice.services.InvoiceService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping(value = "/api/" + ResourceTypes.INVOICES, produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
+public class InvoiceController {
+
+    private final InvoiceService invoiceService;
+
+    public InvoiceController(InvoiceService invoiceService) {
+        this.invoiceService = invoiceService;
+    }
+
+    @Value("${build.version}")
+    private String buildVersion;
+
+    @Autowired
+    private Environment environment;
+
+    @Autowired
+    private ContactInfoDto contactInfoDto;
+
+    @PostMapping
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public SingleResourceResponse<InvoiceResource> createInvoice(final @Valid @RequestBody CreateRequest<InvoiceCreateRequest> requestData) {
+
+        InvoiceDto invoiceDto = requestData.getData().generateDto();
+        Invoice savedInvoice = invoiceService.createInvoice(invoiceDto);
+
+        return new SingleResourceResponse<>(InvoiceResource.toResource(savedInvoice));
+    }
+
+    @GetMapping
+    public MultipleResourceResponse<InvoiceResource> getAllInvoices(
+            @PageableDefault(size = 10, direction = Sort.Direction.ASC) Pageable pageable,
+            @RequestParam(value = "status", required = false) InvoiceStatus status) {
+        Page<Invoice> invoices = invoiceService.getAllInvoices(pageable,status);
+
+        final Page<InvoiceResource> invoiceResourcePage = new PageImpl<>(
+                invoices.getContent()
+                        .stream()
+                        .map(InvoiceResource::toResource)
+                        .collect(Collectors.toList()),
+                invoices.getPageable(),
+                invoices.getTotalElements()
+        );
+        return new MultipleResourceResponse<>(invoiceResourcePage);
+    }
+
+    @GetMapping("/{id}")
+    public SingleResourceResponse<InvoiceResource> getInvoiceById(final @PathVariable("id") Integer id) {
+        Invoice invoice = invoiceService.getInvoiceById(id);
+        return new SingleResourceResponse<>(InvoiceResource.toResource(invoice));
+    }
+
+    @PatchMapping("/{id}")
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    public SingleResourceResponse<InvoiceResource> updateUser(final @PathVariable Integer id, @RequestBody @Validated UpdateRequest<InvoiceCreateRequest> requestData) {
+        InvoiceDto invoiceDto = requestData.getData().generateDto();
+
+        Invoice updatedInvoice = invoiceService.updateInvoice(id, invoiceDto);
+        return new SingleResourceResponse<>(InvoiceResource.toResource(updatedInvoice));
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> deleteUser(final @PathVariable Integer id) {
+        try {
+            invoiceService.deleteInvoice(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/contact-info")
+    public ResponseEntity<ContactInfoDto> getContactInfo() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(contactInfoDto);
+    }
+
+    @GetMapping("/build-info")
+    public ResponseEntity<String> getBuildInfo() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(buildVersion);
+    }
+}

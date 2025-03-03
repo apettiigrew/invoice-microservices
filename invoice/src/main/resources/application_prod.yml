@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+
+build:
+  version: "2.0"
+
+invoice:
+  message: "Welcome to Apettigrew accounts related Production APIs "
+  contactDetails:
+    name: "Thomas A. Anderson - Developer"
+    email: "neo@matrix.com"
+  onCallSupport:
+    - (444) 444-7890
+    - (444) 234-4560
