@@ -8,6 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 @ConfigurationProperties(prefix = "invoice")
-public record ContactInfoDto(String message, Map<String, String> contactDetails, List<String> onCallSupport) {
+@Getter
+@Setter
+public class ContactInfoDto {
+
+    private String message;
+    private Map<String, String> contactDetails;
+    private List<String> onCallSupport;
 
 }

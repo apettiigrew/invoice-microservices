@@ -16,6 +16,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
 
+
   microservice-base-config:
     extends:
       service: network-deploy-service
@@ -32,3 +33,6 @@ services:
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
+
+
