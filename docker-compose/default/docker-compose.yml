@@ -57,7 +57,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://invoicedb:3306/invoicedb
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-      SPRING_APPLICATION_NAME: "invoice"
+      SPRING_APPLICATION_NAME: invoice
       # Flyway configurations
       SPRING_FLYWAY_LOCATIONS: classpath:/db/migration
       SPRING_FLYWAY_SQL-MIGRATION-SUFFIXES: .sql

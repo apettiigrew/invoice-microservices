@@ -3,6 +3,9 @@ server:
 spring:
   application:
     name: "invoice"
+  profiles:
+    active:
+      - "prod"
 
   datasource:
     url: jdbc:mysql://localhost:3306/invoicedb
@@ -33,9 +36,6 @@ spring:
     show-sql: true
   config:
     import: "optional:configserver:http://localhost:8071/"
-    profiles:
-      active:
-        - "default"
   rabbitmq:
     host: "localhost"
     port: 5672
@@ -50,13 +50,3 @@ management:
 
 build:
   version: "3.0"
-
-
-invoice:
-  message: "Welcome to Apettigrew accounts related local APIs "
-  contactDetails:
-    name: "Thomas A. Anderson - Developer"
-    email: "neo@matrix.com"
-  onCallSupport:
-    - (444) 444-7890
-    - (444) 234-4560
