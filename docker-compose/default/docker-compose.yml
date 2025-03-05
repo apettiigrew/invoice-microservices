@@ -15,6 +15,27 @@ services:
       file: common-config.yml
       service: network-deploy-service
 
+  eurekaserver:
+    image: "pettiville/eurekaserver:s6"
+    container_name: eurekaserver-ms
+    ports:
+      - "8070:8070"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+    environment:
+      SPRING_APPLICATION_NAME: "eurekaserver"
+      OTEL_SERVICE_NAME: "eurekaserver"
+
   configserver:
     image: "pettiville/configserver:s1"
     container_name: configserver-ms
@@ -31,7 +52,7 @@ services:
       start_period: 10s
     extends:
       file: common-config.yml
-      service: microservice-base-config
+      service: microservice-eureka-config
 
   invoicedb:
     container_name: invoicedb
@@ -81,7 +102,7 @@ services:
       SPRING_FLYWAY_BASELINE-VERSION: 0.0
     extends:
       file: common-config.yml
-      service: microservice-configserver-config
+      service: microservice-eureka-config
 
   user:
     image: "pettiville/user:s1"
@@ -107,7 +128,7 @@ services:
       SPRING_FLYWAY_BASELINE-VERSION: 0.0
     extends:
       file: common-config.yml
-      service: microservice-configserver-config
+      service: microservice-eureka-config
 
 networks:
   apettigrew:
