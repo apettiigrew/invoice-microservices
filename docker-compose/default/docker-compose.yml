@@ -16,7 +16,7 @@ services:
       service: network-deploy-service
 
   eurekaserver:
-    image: "pettiville/eurekaserver:s6"
+    image: "pettiville/eurekaserver:s1"
     container_name: eurekaserver-ms
     ports:
       - "8070:8070"
@@ -52,7 +52,24 @@ services:
       start_period: 10s
     extends:
       file: common-config.yml
+      service: microservice-base-config
+
+  gatewayserver:
+    image: "pettiville/gatewayserver:s1"
+    container_name: gatewayserver-ms
+    ports:
+      - "8072:8072"
+    depends_on:
+      invoices:
+        condition: service_healthy
+      users:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "gatewayserver"
+    extends:
+      file: common-config.yml
       service: microservice-eureka-config
+
 
   invoicedb:
     container_name: invoicedb
@@ -78,9 +95,9 @@ services:
       file: common-config.yml
       service: microservice-db-config
 
-  invoice:
-    image: "pettiville/invoice:s1"
-    container_name: invoice-ms
+  invoices:
+    image: "pettiville/invoices:s1"
+    container_name: invoices-ms
     ports:
       - "8080:8080"
     depends_on:
@@ -88,11 +105,17 @@ services:
         condition: service_healthy
       configserver:
         condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://invoicedb:3306/invoicedb
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-      SPRING_APPLICATION_NAME: invoice
+      SPRING_APPLICATION_NAME: invoices
       # Flyway configurations
       SPRING_FLYWAY_LOCATIONS: classpath:/db/migration
       SPRING_FLYWAY_SQL-MIGRATION-SUFFIXES: .sql
@@ -104,9 +127,9 @@ services:
       file: common-config.yml
       service: microservice-eureka-config
 
-  user:
-    image: "pettiville/user:s1"
-    container_name: user-ms
+  users:
+    image: "pettiville/users:s1"
+    container_name: users-ms
     ports:
       - "8081:8081"
     depends_on:
@@ -114,11 +137,17 @@ services:
         condition: service_healthy
       configserver:
         condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:8081/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://userdb:3306/userdb
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-      SPRING_APPLICATION_NAME: user
+      SPRING_APPLICATION_NAME: users
       # Flyway configurations
       SPRING_FLYWAY_LOCATIONS: classpath:/db/migration
       SPRING_FLYWAY_SQL-MIGRATION-SUFFIXES: .sql

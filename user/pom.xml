@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.apettigrew</groupId>
-	<artifactId>user</artifactId>
+	<artifactId>users</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>user</name>
 	<description>Microservices for users</description>

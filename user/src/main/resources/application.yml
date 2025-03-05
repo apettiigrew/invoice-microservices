@@ -2,7 +2,7 @@ server:
   port: 8081
 spring:
   application:
-    name: "user"
+    name: "users"
   profiles:
     active:
       - "prod"
@@ -76,6 +76,6 @@ eureka:
 
 info:
   app:
-    name: "user"
-    description: "Apettigrew User Application"
+    name: "users"
+    description: "Apettigrew Users Application"
     version: "1.0.0"

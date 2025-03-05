@@ -28,7 +28,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/api/" + ResourceTypes.USERS, produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
+@RequestMapping(value = "/api/", produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
 @AllArgsConstructor
 @Validated
 public class UserController {

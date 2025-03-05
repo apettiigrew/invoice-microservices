@@ -2,7 +2,7 @@ server:
   port: 8080
 spring:
   application:
-    name: "invoice"
+    name: "invoices"
   profiles:
     active:
       - "prod"
@@ -76,6 +76,12 @@ eureka:
 
 info:
   app:
-    name: "invoice"
-    description: "Apettigrew Invoice Application"
+    name: "invoices"
+    description: "Apettigrew Invoices Application"
     version: "1.0.0"
+
+logging:
+  level:
+    com:
+      apettigrew:
+        invoice: DEBUG

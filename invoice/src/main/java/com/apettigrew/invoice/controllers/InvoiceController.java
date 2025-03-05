@@ -15,6 +15,8 @@ import com.apettigrew.invoice.jsonapi.requests.InvoiceCreateRequest;
 import com.apettigrew.invoice.jsonapi.requests.UpdateRequest;
 import com.apettigrew.invoice.services.InvoiceService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -31,8 +33,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/api/" + ResourceTypes.INVOICES, produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
+@RequestMapping(value = "/api/", produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
 public class InvoiceController {
+
+    private static final Logger logger = LoggerFactory.getLogger(InvoiceController.class);
 
     private final InvoiceService invoiceService;
 
@@ -61,8 +65,13 @@ public class InvoiceController {
 
     @GetMapping
     public MultipleResourceResponse<InvoiceResource> getAllInvoices(
+            @RequestHeader("eazybank-correlation-id")
+            String correlationId,
             @PageableDefault(size = 10, direction = Sort.Direction.ASC) Pageable pageable,
             @RequestParam(value = "status", required = false) InvoiceStatus status) {
+
+        logger.debug("ap-correlation-id found: {} ", correlationId);
+
         Page<Invoice> invoices = invoiceService.getAllInvoices(pageable,status);
 
         final Page<InvoiceResource> invoiceResourcePage = new PageImpl<>(
