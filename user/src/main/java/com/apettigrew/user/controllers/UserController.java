@@ -2,6 +2,7 @@ package com.apettigrew.user.controllers;
 
 import com.apettigrew.user.ResourceTypes;
 import com.apettigrew.user.dtos.UserDto;
+import com.apettigrew.user.dtos.UserRegisterDto;
 import com.apettigrew.user.entities.User;
 import com.apettigrew.user.jsonapi.JsonApiConstants;
 import com.apettigrew.user.jsonapi.MultipleResourceResponse;
@@ -13,6 +14,8 @@ import com.apettigrew.user.jsonapi.requests.UserCreateRequest;
 import com.apettigrew.user.jsonapi.requests.UserUpdateRequest;
 import com.apettigrew.user.services.UserService;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,19 +31,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/api/", produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
+@RequestMapping(value = "/api", produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
 @AllArgsConstructor
 @Validated
 public class UserController {
-
     @Autowired
     private UserService userService;
 
-    @GetMapping("/{uuid}")
-    public SingleResourceResponse<UserResource> getUserByUuid(final @PathVariable("uuid") UUID uuid) {
-        User user = userService.getUserByUuid(uuid);
-        return new SingleResourceResponse<>(UserResource.toResource(user));
-    }
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping
     public MultipleResourceResponse<UserResource> getAllUsers(@PageableDefault(size = 10, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
@@ -57,11 +55,17 @@ public class UserController {
         return new MultipleResourceResponse<>(userResourcePage);
     }
 
+    @GetMapping("/{uuid}")
+    public SingleResourceResponse<UserResource> getUserByUuid(final @PathVariable("uuid") UUID uuid) {
+        User user = userService.getUserByUuid(uuid);
+        return new SingleResourceResponse<>(UserResource.toResource(user));
+    }
+
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
     public SingleResourceResponse<UserResource> createUser(final @RequestBody @Validated CreateRequest<UserCreateRequest> requestData) {
-        UserDto userDto = requestData.getData().generateDto();
-        final var user = userService.createUser(userDto);
+        UserRegisterDto registerUserDto = requestData.getData().generateDto();
+        final var user = userService.createUser(registerUserDto);
 
         return new SingleResourceResponse<>(UserResource.toResource(user));
     }

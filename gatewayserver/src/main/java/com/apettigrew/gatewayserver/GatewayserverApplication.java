@@ -16,7 +16,7 @@ public class GatewayserverApplication {
 	}
 
 	@Bean
-	public RouteLocator eazyBankRouteConfig(RouteLocatorBuilder routeLocatorBuilder) {
+	public RouteLocator msBankRouteConfig(RouteLocatorBuilder routeLocatorBuilder) {
 		return routeLocatorBuilder.routes()
 				.route(p -> p
 					.path("/petti/invoices/**")

@@ -13,15 +13,21 @@ import org.springframework.security.oauth2.server.resource.authentication.Reacti
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import reactor.core.publisher.Mono;
 
+
+
+//                .pathMatchers(HttpMethod.POST, "petti/users/**").permitAll()
+//                .pathMatchers("/petti/users/**").authenticated()
+//                .pathMatchers("/petti/invoices/**").authenticated()
+
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity serverHttpSecurity) {
-        serverHttpSecurity.authorizeExchange(exchanges -> exchanges.pathMatchers(HttpMethod.GET).permitAll()
-                .pathMatchers("/petti/invoices/**").hasRole("INVOICES")
-                .pathMatchers("/petti/users/**").hasRole("USERS"))
+        serverHttpSecurity.authorizeExchange(exchanges ->
+                        exchanges.anyExchange().authenticated())
+
                 .oauth2ResourceServer(oAuth2ResourceServerSpec -> oAuth2ResourceServerSpec
                         .jwt(jwtSpec -> jwtSpec.jwtAuthenticationConverter(grantedAuthoritiesExtractor())));
         serverHttpSecurity.csrf(csrfSpec -> csrfSpec.disable());

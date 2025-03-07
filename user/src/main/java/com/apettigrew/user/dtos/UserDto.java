@@ -2,7 +2,9 @@ package com.apettigrew.user.dtos;
 
 import com.apettigrew.user.jsonapi.ResourceDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -16,6 +18,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 public class UserDto implements ResourceDto<UUID> {
+    @NotNull(message = "Email is required")
+    @Email(message = "Invalid email format")
+    private String email;
+
     @NotNull(message = "First name is required")
     @Size(max = 255, message ="This field can only be 255 characters long")
     private String firstName;

@@ -2,6 +2,7 @@ package com.apettigrew.user.jsonapi.requests;
 
 import com.apettigrew.user.ResourceTypes;
 import com.apettigrew.user.dtos.UserDto;
+import com.apettigrew.user.dtos.UserRegisterDto;
 import com.apettigrew.user.jsonapi.CreateResource;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +12,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserCreateRequest implements CreateResource<UserDto> {
+public class UserCreateRequest implements CreateResource<UserRegisterDto> {
 
     @Pattern(regexp = ResourceTypes.USERS)
     @NotNull
@@ -19,10 +20,10 @@ public class UserCreateRequest implements CreateResource<UserDto> {
 
     @Valid
     @NotNull
-    private UserDto attributes;
+    private UserRegisterDto attributes;
 
     @Override
-    public UserDto generateDto() {
+    public UserRegisterDto generateDto() {
         return attributes;
     }
 }

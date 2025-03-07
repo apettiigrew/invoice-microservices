@@ -12,7 +12,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableConfigurationProperties(value = {ContactInfoDto.class})
 @ComponentScan(basePackageClasses = UserApplication.class)
 public class UserApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(UserApplication.class, args);
 	}

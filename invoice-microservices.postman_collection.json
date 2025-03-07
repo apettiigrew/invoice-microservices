@@ -1,0 +1,1009 @@
+{
+	"info": {
+		"_postman_id": "b1a2ebad-074a-4ab2-84cc-fc1c2ed89049",
+		"name": "invoice-microservices",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2045835"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "login-users",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.response.json();",
+									"var token = data.attributes.jwt;",
+									"if (token) {",
+									"    // Store the 1token in a global variable",
+									"    pm.collectionVariables.set(\"jwt_token\", token);",
+									"    ",
+									"    // Log token for debugging",
+									"    console.log(\"JWT Token stored:\", token);",
+									"} else {",
+									"    console.log(\"No token found in response\");",
+									"}",
+									"",
+									"// // set csrf token ",
+									"// const xsrfToken = pm.cookies.get(\"XSRF-TOKEN\");",
+									"// pm.collectionVariables.set(\"csrf_token\", xsrfToken);",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"users\",\n    \"attributes\": {\n      \"username\":\"petti@gmail.com\",\n      \"password\": \"123456\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register-users",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"users\",\n    \"attributes\": {\n      \"username\":\"petti@gmail.com\",\n      \"firstName\": \"Andrew\",\n      \"lastName\": \"Pettigrew\",\n      \"password\": \"123456\",\n      \"role\":\"read\",\n      \"birthDate\": \"2000-01-01\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "create-users",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"users\",\n    \"attributes\": {\n      \"email\": \"pettiville93@gmail.com\",\n      \"password\": \"12345\",\n      \"firstName\": \"Andrew\",\n      \"lastName\": \"Pettigrew\",\n      \"birthDate\": \"2000-01-01\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{user_url}}",
+							"host": [
+								"{{user_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-users",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"users\",\n    \"attributes\": {\n      \"firstName\": \"Name was updated\",\n      \"lastName\": \"Last Name\",\n      \"birthDate\": \"1993-09-14\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/:uuid",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								":uuid"
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "258d9732-ae13-4011-bfa6-11a8419be343"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all users",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{user_url}}?page=0&size=10",
+							"host": [
+								"{{user_url}}"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0",
+									"description": "Page number"
+								},
+								{
+									"key": "size",
+									"value": "10",
+									"description": "Number items on page."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get single user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{user_url}}/:uuid",
+							"host": [
+								"{{user_url}}"
+							],
+							"path": [
+								":uuid"
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "08054770-5525-4519-94d8-c845deecff1c"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-users",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{user_url}}/:uuid",
+							"host": [
+								"{{user_url}}"
+							],
+							"path": [
+								":uuid"
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "258d9732-ae13-4011-bfa6-11a8419be343"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"pm.request.headers.add({",
+							"    key: \"Authorization\",",
+							"    value: pm.collectionVariables.get(\"jwt_token\")",
+							"});"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "invoice",
+			"item": [
+				{
+					"name": "create invoice",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"invoices\",\n        \"attributes\": {\n            \"userUuid\": \"08054770-5525-4519-94d8-c845deecff1c\",\n            \"paymentDue\": \"2024-03-15\",\n            \"description\": \"Invoice for services rendered\",\n            \"paymentTerms\": 30,\n            \"clientName\": \"Acme Corporation\",\n            \"clientEmail\": \"info@acme.com\",\n            \"status\": \"DRAFT\",\n            \"total\": 1250.50,\n            \"senderAddress\": {\n                \"street\": \"123 Main St\",\n                \"city\": \"Anytown\",\n                \"state\": \"CA\",\n                \"zip\": \"91234\"\n            },\n            \"clientAddress\": {\n                \"street\": \"456 Oak Ave\",\n                \"city\": \"Springfield\",\n                \"state\": \"IL\",\n                \"zip\": \"62704\"\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/invoices",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all invoices",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/invoices?page=0&size=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoices"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0",
+									"description": "Page number"
+								},
+								{
+									"key": "size",
+									"value": "10",
+									"description": "Number items on page."
+								},
+								{
+									"key": "status",
+									"value": "PENDING",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get single invoice",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/invoices/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoices",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "11"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get single invoice",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"invoices\",\n        \"attributes\": {\n            \"userUuid\": \"08054770-5525-4519-94d8-c845deecff1c\",\n            \"paymentDue\": \"2024-03-15\",\n            \"description\": \"updated description\",\n            \"paymentTerms\": 24,\n            \"clientName\": \"Acme Corporation\",\n            \"clientEmail\": \"info@acme.com\",\n            \"status\": \"DRAFT\",\n            \"total\": 1250.50,\n            \"senderAddress\": {\n                \"street\": \"123 Main St\",\n                \"city\": \"Anytown\",\n                \"state\": \"CA\",\n                \"zip\": \"91234\"\n            },\n            \"clientAddress\": {\n                \"street\": \"456 Oak Ave\",\n                \"city\": \"Springfield\",\n                \"state\": \"IL\",\n                \"zip\": \"62704\"\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/invoices/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoices",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "11"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-users",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/invoices/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoices",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "11"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "contact-info",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/invoices/contact-info",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoices",
+								"contact-info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bus refresh",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/invoice/actuator/busrefresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoice",
+								"actuator",
+								"busrefresh"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"pm.request.headers.add({",
+							"    key: \"Authorization\",",
+							"    value: pm.collectionVariables.get(\"jwt_token\")",
+							"});"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "configserver",
+			"item": [
+				{
+					"name": "invoice",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "aishwarya@eazybank.com",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8071/invoices/default",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8071",
+							"path": [
+								"invoices",
+								"default"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "encrypt",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "aishwarya@eazybank.com",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8071/encrypt",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8071",
+							"path": [
+								"encrypt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "decrypt",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "f83ac5a34ba5f4657ae8e863c063c1b69efb4d23d0c431eb134f8d1b3ed0823dee0a4b627d091455b4c6600353a3682c"
+						},
+						"url": {
+							"raw": "http://localhost:8071/decrypt",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8071",
+							"path": [
+								"decrypt"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "eurekaserver",
+			"item": [
+				{
+					"name": "eureka_apps user",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8070/eureka/apps/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8070",
+							"path": [
+								"eureka",
+								"apps",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "eureka_apps invoice",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8070/eureka/apps/invoice",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8070",
+							"path": [
+								"eureka",
+								"apps",
+								"invoice"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "gatewayserver",
+			"item": [
+				{
+					"name": "petti/invoices/api/contact-info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8072/petti/invoices/api/invoices/contact-info",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8072",
+							"path": [
+								"petti",
+								"invoices",
+								"api",
+								"invoices",
+								"contact-info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "petti/users/api/contact-info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8072/petti/users/api/contact-info",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8072",
+							"path": [
+								"petti",
+								"users",
+								"api",
+								"contact-info"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "keycloak",
+			"item": [
+				{
+					"name": "create users",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "apettigrew-invoice-ms",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "xiG8kSIK3O4YqHOkYh2b3d7n8OSVixc8",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "openid email profile",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:7080/admin/realms/master/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7080",
+							"path": [
+								"admin",
+								"realms",
+								"master",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Resource Owner Password Credentials Grant",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "petti-invoicemicroservice-app",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "hPf2PlK4H28MYm7xrhmmJe8Ba79TwVEh",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "openid email profile",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "demo",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "1234",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:7080/realms/development/protocol/openid-connect/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7080",
+							"path": [
+								"realms",
+								"development",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "introspect",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhYTNVNXRIVjB3NEF1WmlXZ3Y0Tm5VM1JMaVFEYmR5S0Fqd3pYQVV6U1RZIn0.eyJleHAiOjE3NDEzMzE0MDUsImlhdCI6MTc0MTMzMTEwNSwianRpIjoiZjU4N2FlMDktMmFlOS00NjE4LTg1YTYtZWM0ODNlMmU0MTg0IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo3MDgwL3JlYWxtcy9kZXZlbG9wbWVudCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiJkMjc0ODM1My0zZWFhLTQyYmQtYjg4YS05MmRkNDgyYmZmYzkiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJwZXR0aS1pbnZvaWNlbWljcm9zZXJ2aWNlLWFwcCIsInNpZCI6ImNlZjRlM2JjLWVhZjMtNGMzZi1hMzRiLTdkYTRmYzAxMDdmYyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLWRldmVsb3BtZW50IiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJBbmRyZXcgUGV0dGlncmV3IiwicHJlZmVycmVkX3VzZXJuYW1lIjoiZGVtbyIsImdpdmVuX25hbWUiOiJBbmRyZXciLCJmYW1pbHlfbmFtZSI6IlBldHRpZ3JldyIsImVtYWlsIjoicGV0dGl2aWxsZTkzQGdtYWlsLmNvbSJ9.vEbiwQ7765dPXMzY5NR0XvxqN320B3WLWYzPOTq5P_m1o_yEXsroDzYKGvhgqByp0tFCX1VyTxpshLSRzoxR29L2CYhAcsFXgjfB-M83u1e5F3ozqXtv8Ow-goWUAdE3WH0Gi5FRbbIAXkEL6CxKCWGzv5-WaujKvU-ZEggKiiAFzu_wW1t43nJ6zkayNWtGqYyN7X5_M5R0HjXjXa3OSd08nWzW7ozyfmcbQejlGg7kkpr_-tSKKDSTyvh8pSTa87Taklebz1o_CbZVlKU6x-bLsScl3dgdXrKSRPXw-l753l8kZn3_2m1HuR98q3nRQ4d08dq2EhJFMx3OXlYhJQ",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "petti-invoicemicroservice-app",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "hPf2PlK4H28MYm7xrhmmJe8Ba79TwVEh",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:7080/realms/development/protocol/openid-connect/token/introspect",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7080",
+							"path": [
+								"realms",
+								"development",
+								"protocol",
+								"openid-connect",
+								"token",
+								"introspect"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhYTNVNXRIVjB3NEF1WmlXZ3Y0Tm5VM1JMaVFEYmR5S0Fqd3pYQVV6U1RZIn0.eyJleHAiOjE3NDEzMzE0MDUsImlhdCI6MTc0MTMzMTEwNSwianRpIjoiZjU4N2FlMDktMmFlOS00NjE4LTg1YTYtZWM0ODNlMmU0MTg0IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo3MDgwL3JlYWxtcy9kZXZlbG9wbWVudCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiJkMjc0ODM1My0zZWFhLTQyYmQtYjg4YS05MmRkNDgyYmZmYzkiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJwZXR0aS1pbnZvaWNlbWljcm9zZXJ2aWNlLWFwcCIsInNpZCI6ImNlZjRlM2JjLWVhZjMtNGMzZi1hMzRiLTdkYTRmYzAxMDdmYyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLWRldmVsb3BtZW50IiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJBbmRyZXcgUGV0dGlncmV3IiwicHJlZmVycmVkX3VzZXJuYW1lIjoiZGVtbyIsImdpdmVuX25hbWUiOiJBbmRyZXciLCJmYW1pbHlfbmFtZSI6IlBldHRpZ3JldyIsImVtYWlsIjoicGV0dGl2aWxsZTkzQGdtYWlsLmNvbSJ9.vEbiwQ7765dPXMzY5NR0XvxqN320B3WLWYzPOTq5P_m1o_yEXsroDzYKGvhgqByp0tFCX1VyTxpshLSRzoxR29L2CYhAcsFXgjfB-M83u1e5F3ozqXtv8Ow-goWUAdE3WH0Gi5FRbbIAXkEL6CxKCWGzv5-WaujKvU-ZEggKiiAFzu_wW1t43nJ6zkayNWtGqYyN7X5_M5R0HjXjXa3OSd08nWzW7ozyfmcbQejlGg7kkpr_-tSKKDSTyvh8pSTa87Taklebz1o_CbZVlKU6x-bLsScl3dgdXrKSRPXw-l753l8kZn3_2m1HuR98q3nRQ4d08dq2EhJFMx3OXlYhJQ",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "petti-invoicemicroservice-app",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "hPf2PlK4H28MYm7xrhmmJe8Ba79TwVEh",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:7080/realms/development/protocol/openid-connect/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7080",
+							"path": [
+								"realms",
+								"development",
+								"protocol",
+								"openid-connect",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ClientCredentials_AccessToken",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{client_secret}}",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "openid email profile",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:7080/realms/master/protocol/openid-connect/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7080",
+							"path": [
+								"realms",
+								"master",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "user_url",
+			"value": "http://localhost:8081/api"
+		},
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080/api",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": ""
+		},
+		{
+			"key": "client_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "client_secret",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

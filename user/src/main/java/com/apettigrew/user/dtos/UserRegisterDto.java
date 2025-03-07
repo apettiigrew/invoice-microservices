@@ -17,7 +17,11 @@ import java.util.UUID;
 public class UserRegisterDto implements ResourceDto<UUID> {
     @NotNull(message = "Username is required")
     @Size(max = 255, message ="This field can only be 255 characters long")
-    private String username;
+    private String email;
+
+    @NotNull(message = "First name is required")
+    @Size(max = 255, message ="This field can only be 255 characters long")
+    private String userName;
 
     @NotNull(message = "First name is required")
     @Size(max = 255, message ="This field can only be 255 characters long")
@@ -31,10 +35,10 @@ public class UserRegisterDto implements ResourceDto<UUID> {
     @Size(max = 255, message ="This field can only be 255 characters long")
     private String password;
 
-    @NotNull(message = "Role is required")
-    @Size(max = 255, message ="This field can only be 255 characters long")
-    private String role;
+//    @NotNull(message = "Role is required")
+//    @Size(max = 255, message ="This field can only be 255 characters long")
+//    private String role;
 
-    @NotNull(message = "birthDate is required")
-    private LocalDate birthDate;
+//    @NotNull(message = "birthDate is required")
+//    private LocalDate birthDate;
 }

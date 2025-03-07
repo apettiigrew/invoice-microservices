@@ -29,6 +29,9 @@ public class User {
     @JdbcTypeCode(Types.CHAR)
     private UUID uuid;
 
+    @Column(name="email", nullable = false)
+    private String email;
+
     @Column(name="username", nullable = false)
     private String username;
 
