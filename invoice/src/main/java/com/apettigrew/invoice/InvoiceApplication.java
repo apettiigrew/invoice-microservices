@@ -1,19 +1,26 @@
 package com.apettigrew.invoice;
 
 import com.apettigrew.invoice.dtos.ContactInfoDto;
+import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.config.EventProcessingConfigurer;
+import org.axonframework.eventhandling.PropagatingErrorHandler;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableJpaRepositories
 @EnableConfigurationProperties(value = {ContactInfoDto.class})
 @ComponentScan(basePackageClasses = InvoiceApplication.class)
+//@EnableJpaAuditing(auditorAwareRef = "auditAwareImpl")
 public class InvoiceApplication {
 
 	public static void main(String[] args) {
@@ -34,4 +41,15 @@ public class InvoiceApplication {
 
 		return mapper;
 	}
+
+//	@Autowired
+//	public void registerCustomerCommandInterceptor(ApplicationContext context, CommandGateway commandGateway) {
+//		commandGateway.registerDispatchInterceptor(context.getBean(CustomerCommandInterceptor.class));
+//	}
+
+//	@Autowired
+//	public void configure(EventProcessingConfigurer config) {
+//		config.registerListenerInvocationErrorHandler("invoice-group",
+//				conf -> PropagatingErrorHandler.instance());
+//	}
 }

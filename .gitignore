@@ -202,3 +202,9 @@ README.html
 .exercism
 *.meta
 list.bin
+
+*.snapshots
+*.events
+*.pid
+axonserver/data/**
+axonserver/events/**

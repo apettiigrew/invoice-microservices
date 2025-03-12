@@ -1,18 +1,17 @@
 server:
   port: 8080
+
 spring:
   application:
     name: "invoices"
   profiles:
     active:
       - "prod"
-
   datasource:
     url: jdbc:mysql://localhost:3306/invoicedb
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
-
   flyway:
     locations: /db/migration
     sql-migration-suffixes: .sql
@@ -20,12 +19,13 @@ spring:
     user: root
     password: root
     baseline-version: 0.0
+    enabled: false
   h2:
     console:
       enabled: true
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     open-in-view: false
@@ -90,3 +90,7 @@ logging:
         invoice: DEBUG
   pattern:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+
+axon:
+  axonserver:
+    servers: localhost:8124

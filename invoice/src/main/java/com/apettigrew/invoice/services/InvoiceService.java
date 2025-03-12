@@ -1,7 +1,9 @@
 package com.apettigrew.invoice.services;
 
+import com.apettigrew.invoice.dtos.InvoiceDto;
 import com.apettigrew.invoice.entities.Invoice;
 import com.apettigrew.invoice.exceptions.InvoiceNotFoundException;
+import com.apettigrew.invoice.respositories.InvoiceRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
@@ -18,14 +20,14 @@ import java.util.UUID;
 @Transactional
 public class InvoiceService {
     @Autowired
-    private com.apettigrew.invoice.respositories.InvoiceRepository invoiceRepository;
+    private InvoiceRepository invoiceRepository;
 
     @Autowired
     @Qualifier("skipNullModelMapper")
     private ModelMapper modelMapper;
 
 
-    public Page<com.apettigrew.invoice.entities.Invoice> getAllInvoices(Pageable pageable, com.apettigrew.invoice.enums.InvoiceStatus status) {
+    public Page<Invoice> getAllInvoices(Pageable pageable, com.apettigrew.invoice.enums.InvoiceStatus status) {
         if(status != null){
             return invoiceRepository.findByStatus(status,pageable);
         }
@@ -33,13 +35,13 @@ public class InvoiceService {
         return invoiceRepository.findAll(pageable);
     }
 
-    public com.apettigrew.invoice.entities.Invoice getInvoiceById(Integer id) {
+    public Invoice getInvoiceById(String id) {
         return invoiceRepository.findById(id).orElseThrow(() -> new InvoiceNotFoundException("Invoice ID "+id+" not found"));
     }
 
-    public com.apettigrew.invoice.entities.Invoice createInvoice(com.apettigrew.invoice.dtos.InvoiceDto invoiceDto) {
+    public Invoice createInvoice(InvoiceDto invoiceDto) {
         ObjectMapper objectMapper = new ObjectMapper();
-        Invoice invoice = modelMapper.map(invoiceDto, com.apettigrew.invoice.entities.Invoice.class);
+        Invoice invoice = modelMapper.map(invoiceDto, Invoice.class);
         try {
             invoice.setSenderAddress(objectMapper.writeValueAsString(invoiceDto.getSenderAddress()));
             invoice.setClientAddress(objectMapper.writeValueAsString(invoiceDto.getClientAddress()));
@@ -50,7 +52,7 @@ public class InvoiceService {
         return invoiceRepository.save(invoice);
     }
 
-    public com.apettigrew.invoice.entities.Invoice updateInvoice(Integer id, com.apettigrew.invoice.dtos.InvoiceDto invoiceDto) {
+    public com.apettigrew.invoice.entities.Invoice updateInvoice(String id, com.apettigrew.invoice.dtos.InvoiceDto invoiceDto) {
         com.apettigrew.invoice.entities.Invoice existingInvoice = invoiceRepository.findById(id).orElseThrow(() -> new RuntimeException("Invoice not found"));
         ObjectMapper objectMapper = new ObjectMapper();
         modelMapper.map(invoiceDto,existingInvoice);
@@ -64,7 +66,7 @@ public class InvoiceService {
        return invoiceRepository.save(existingInvoice);
     }
 
-    public void deleteInvoice(Integer id) {
+    public void deleteInvoice(String id) {
         invoiceRepository.deleteById(id);
     }
 }
