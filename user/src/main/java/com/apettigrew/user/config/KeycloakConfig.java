@@ -1,6 +1,5 @@
 package com.apettigrew.user.config;
 
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -13,7 +12,6 @@ public class KeycloakConfig {
     final static String clientId = "admin-cli";
     final static String userName = "admin";
     final static String password = "1234";
-
 
     public KeycloakConfig() {}
 

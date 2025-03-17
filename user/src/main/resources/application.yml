@@ -6,34 +6,6 @@ spring:
   profiles:
     active:
       - "prod"
-
-  datasource:
-    url: jdbc:mysql://localhost:3307/userdb
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-  flyway:
-    locations: /db/migration
-    sql-migration-suffixes: .sql
-    url: jdbc:mysql://localhost:3307/userdb
-    user: root
-    password: root
-    baseline-version: 0.0
-  h2:
-    console:
-      enabled: true
-  jpa:
-    hibernate:
-      ddl-auto: none
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    open-in-view: false
-    properties:
-      hibernate:
-        type.preferred_uuid_jdbc_type: VARCHAR
-        format_sql: true
-    show-sql: true
   config:
     import: "optional:configserver:http://localhost:8071/"
   rabbitmq:
