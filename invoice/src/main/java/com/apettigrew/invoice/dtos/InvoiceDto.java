@@ -21,7 +21,10 @@ import java.util.UUID;
 public class InvoiceDto implements ResourceDto<UUID> {
     @JsonIgnore
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String id;
+    private int id;
+
+    @NotNull(message = "User Id is required")
+    private String userId;
 
     @NotNull(message = "Payment due date is required")
     private LocalDate paymentDue;

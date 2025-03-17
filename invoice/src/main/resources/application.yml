@@ -19,7 +19,7 @@ spring:
     user: root
     password: root
     baseline-version: 0.0
-    enabled: false
+    enabled: true
   h2:
     console:
       enabled: true

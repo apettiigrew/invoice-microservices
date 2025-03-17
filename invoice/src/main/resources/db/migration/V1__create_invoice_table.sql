@@ -1,5 +1,6 @@
 CREATE TABLE invoices (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL,
     payment_due DATE NOT NULL,
     description TEXT NOT NULL,
     payment_terms INT NOT NULL,
