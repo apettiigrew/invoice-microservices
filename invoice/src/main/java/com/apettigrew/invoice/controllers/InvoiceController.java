@@ -1,7 +1,6 @@
 package com.apettigrew.invoice.controllers;
 
 
-import com.apettigrew.invoice.ResourceTypes;
 import com.apettigrew.invoice.dtos.ContactInfoDto;
 import com.apettigrew.invoice.dtos.InvoiceDto;
 import com.apettigrew.invoice.entities.Invoice;
@@ -17,8 +16,8 @@ import com.apettigrew.invoice.services.InvoiceService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,6 +31,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
 
+@RestController
+@RequestMapping(value = "/api", produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
 public class InvoiceController {
 
     private static final Logger logger = LoggerFactory.getLogger(InvoiceController.class);
@@ -52,6 +53,7 @@ public class InvoiceController {
     private ContactInfoDto contactInfoDto;
 
 
+    @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
     public SingleResourceResponse<InvoiceResource> createInvoice(final @Valid @RequestBody CreateRequest<InvoiceCreateRequest> requestData) {
 
@@ -61,8 +63,9 @@ public class InvoiceController {
         return new SingleResourceResponse<>(InvoiceResource.toResource(savedInvoice));
     }
 
+    @GetMapping
     public MultipleResourceResponse<InvoiceResource> getAllInvoices(
-            @RequestHeader("eazybank-correlation-id")
+            @RequestHeader("ap-correlation-id")
             String correlationId,
             @PageableDefault(size = 10, direction = Sort.Direction.ASC) Pageable pageable,
             @RequestParam(value = "status", required = false) InvoiceStatus status) {

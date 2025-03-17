@@ -4,7 +4,6 @@ import com.apettigrew.invoice.enums.InvoiceStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
@@ -20,10 +19,11 @@ import java.util.Date;
 @Table(name = "invoices")
 public class Invoice {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", updatable = false, nullable = false, unique = true)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column(name = "user_id", nullable = false)
+    private String userId;
 
     @Column(name = "payment_due", nullable = false)
     private LocalDate paymentDue;

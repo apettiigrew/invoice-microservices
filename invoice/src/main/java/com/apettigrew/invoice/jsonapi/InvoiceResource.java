@@ -16,10 +16,8 @@ import org.modelmapper.ModelMapper;
 @NoArgsConstructor
 public class InvoiceResource implements Resource<InvoiceDto> {
     private final String type = ResourceTypes.INVOICES;
-    private String id;
+    private int id;
     private InvoiceDto attributes;
-
-
 
     public static InvoiceResource toResource(final Invoice invoice){
         if(invoice == null){

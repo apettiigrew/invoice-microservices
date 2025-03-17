@@ -19,13 +19,13 @@ spring:
     user: root
     password: root
     baseline-version: 0.0
-    enabled: false
+    enabled: true
   h2:
     console:
       enabled: true
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     open-in-view: false
@@ -91,6 +91,3 @@ logging:
   pattern:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 
-axon:
-  axonserver:
-    servers: localhost:8124
