@@ -47,10 +47,7 @@ public class UserService {
     }
 
     public User createUser(UserRegisterDto userDto) {
-//        final User user =  modelMapper.map(registerUserDto, User.class);
-
         UserRepresentation userRep = new UserRepresentation();
-        userRep.setId("12342");
         userRep.setUsername(userDto.getUserName());
         userRep.setFirstName(userDto.getFirstName());
         userRep.setLastName(userDto.getLastName());
@@ -65,16 +62,14 @@ public class UserService {
         userRep.setCredentials(creds);
 
         Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
-        try (Response response = keycloak.realm(realm).users().create(userRep)) {
-            if (response.getStatus() != 201) {
-                logger.error("Failed to create user: " + response.getStatus());
-                throw new RuntimeException("Failed to create user");
-            }
+        try  {
+            Response response = keycloak.realm(realm).users().create(userRep);
             String userId = CreatedResponseUtil.getCreatedId(response);
             UserResource userResource = keycloak.realm(realm).users().get(userId);
+        }catch(Exception e){
+            logger.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
-
-
         return modelMapper.map(userRep, User.class);
     }
 
