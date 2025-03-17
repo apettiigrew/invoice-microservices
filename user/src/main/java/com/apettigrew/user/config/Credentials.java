@@ -3,7 +3,6 @@ package com.apettigrew.user.config;
 import org.keycloak.representations.idm.CredentialRepresentation;
 
 public class Credentials {
-
     public static CredentialRepresentation createPasswordCredentials(String password) {
         CredentialRepresentation passwordCredentials = new CredentialRepresentation();
         passwordCredentials.setTemporary(false);

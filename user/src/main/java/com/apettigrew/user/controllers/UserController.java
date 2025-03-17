@@ -1,9 +1,7 @@
 package com.apettigrew.user.controllers;
 
-import com.apettigrew.user.ResourceTypes;
 import com.apettigrew.user.dtos.UserDto;
 import com.apettigrew.user.dtos.UserRegisterDto;
-import com.apettigrew.user.entities.User;
 import com.apettigrew.user.jsonapi.JsonApiConstants;
 import com.apettigrew.user.jsonapi.MultipleResourceResponse;
 import com.apettigrew.user.jsonapi.SingleResourceResponse;
@@ -17,17 +15,14 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -42,22 +37,14 @@ public class UserController {
 
     @GetMapping
     public MultipleResourceResponse<UserResource> getAllUsers(@PageableDefault(size = 10, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
-        Page<User> users = userService.getAllUsers(pageable);
-
-        final Page<UserResource> userResourcePage = new PageImpl<>(
-                users.getContent()
-                        .stream()
-                        .map(UserResource::toResource)
-                        .collect(Collectors.toList()),
-                users.getPageable(),
-                users.getTotalElements()
-        );
-        return new MultipleResourceResponse<>(userResourcePage);
+        List<UserDto> userDto = userService.getAllUsers(pageable);
+        List<UserResource> resources = userDto.stream().map(UserResource::toResource).collect(Collectors.toList());
+        return new MultipleResourceResponse<>(resources);
     }
 
-    @GetMapping("/{uuid}")
-    public SingleResourceResponse<UserResource> getUserByUuid(final @PathVariable("uuid") UUID uuid) {
-        User user = userService.getUserByUuid(uuid);
+    @GetMapping("/{id}")
+    public SingleResourceResponse<UserResource> getUserByUuid(final @PathVariable("id") String id) {
+        UserDto user = userService.getUserById(id);
         return new SingleResourceResponse<>(UserResource.toResource(user));
     }
 
@@ -70,21 +57,22 @@ public class UserController {
         return new SingleResourceResponse<>(UserResource.toResource(user));
     }
 
-    @PatchMapping("/{uuid}")
+    @PatchMapping("/{id}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public SingleResourceResponse<UserResource> updateUser(final @PathVariable UUID uuid, @RequestBody @Validated UpdateRequest<UserUpdateRequest> userDto) {
-        User updatedUser = userService.updateUser(uuid, userDto.getData().generateDto());
+    public SingleResourceResponse<UserResource> updateUser(final @PathVariable String id, @RequestBody @Validated UpdateRequest<UserUpdateRequest> userDto) {
+        var user = userDto.getData().generateDto();
+        UserDto updatedUser = userService.updateUser(id,user);
         return new SingleResourceResponse<>(UserResource.toResource(updatedUser));
     }
 
-    @DeleteMapping("/{uuid}")
-    @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteUser(final @PathVariable UUID uuid) {
-        try {
-            userService.deleteUser(uuid);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
+//    @DeleteMapping("/{uuid}")
+//    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+//    public ResponseEntity<Void> deleteUser(final @PathVariable UUID uuid) {
+//        try {
+//            userService.deleteUser(uuid);
+//            return ResponseEntity.noContent().build();
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.internalServerError().build();
+//        }
+//    }
 }
