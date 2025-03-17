@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
+public interface InvoiceRepository extends JpaRepository<Invoice, String> {
     Page<Invoice> findByStatus(@Param("status") InvoiceStatus status, Pageable pageable);
 }

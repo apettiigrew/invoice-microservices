@@ -1,31 +1,36 @@
 package com.apettigrew.invoice.jsonapi;
 
 import com.apettigrew.invoice.ResourceTypes;
+import com.apettigrew.invoice.dtos.AddressDto;
+import com.apettigrew.invoice.dtos.InvoiceDto;
+import com.apettigrew.invoice.entities.Invoice;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import org.modelmapper.ModelMapper;
 
 @Getter
 @ToString
+@Setter
 @AllArgsConstructor
-public class InvoiceResource implements Resource<com.apettigrew.invoice.dtos.InvoiceDto> {
+@NoArgsConstructor
+public class InvoiceResource implements Resource<InvoiceDto> {
     private final String type = ResourceTypes.INVOICES;
-    private Long id;
-    private com.apettigrew.invoice.dtos.InvoiceDto attributes;
+    private String id;
+    private InvoiceDto attributes;
 
-    public static InvoiceResource toResource(final com.apettigrew.invoice.entities.Invoice invoice){
+
+
+    public static InvoiceResource toResource(final Invoice invoice){
         if(invoice == null){
             return null;
         }
         ObjectMapper objectMapper = new ObjectMapper();
         final var modelMapper = new ModelMapper();
-        final var attributes = modelMapper.map(invoice, com.apettigrew.invoice.dtos.InvoiceDto.class);
+        final var attributes = modelMapper.map(invoice, InvoiceDto.class);
         try {
-            attributes.setClientAddress(objectMapper.readValue(invoice.getClientAddress(), com.apettigrew.invoice.dtos.AddressDto.class));
-            attributes.setSenderAddress(objectMapper.readValue(invoice.getSenderAddress(), com.apettigrew.invoice.dtos.AddressDto.class));
+            attributes.setClientAddress(objectMapper.readValue(invoice.getClientAddress(), AddressDto.class));
+            attributes.setSenderAddress(objectMapper.readValue(invoice.getSenderAddress(), AddressDto.class));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

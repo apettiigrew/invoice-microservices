@@ -32,8 +32,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
 
-@RestController
-@RequestMapping(value = "/api/", produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
 public class InvoiceController {
 
     private static final Logger logger = LoggerFactory.getLogger(InvoiceController.class);
@@ -53,7 +51,7 @@ public class InvoiceController {
     @Autowired
     private ContactInfoDto contactInfoDto;
 
-    @PostMapping
+
     @ResponseStatus(code = HttpStatus.CREATED)
     public SingleResourceResponse<InvoiceResource> createInvoice(final @Valid @RequestBody CreateRequest<InvoiceCreateRequest> requestData) {
 
@@ -63,7 +61,6 @@ public class InvoiceController {
         return new SingleResourceResponse<>(InvoiceResource.toResource(savedInvoice));
     }
 
-    @GetMapping
     public MultipleResourceResponse<InvoiceResource> getAllInvoices(
             @RequestHeader("eazybank-correlation-id")
             String correlationId,
@@ -86,14 +83,14 @@ public class InvoiceController {
     }
 
     @GetMapping("/{id}")
-    public SingleResourceResponse<InvoiceResource> getInvoiceById(final @PathVariable("id") Integer id) {
+    public SingleResourceResponse<InvoiceResource> getInvoiceById(final @PathVariable("id") String id) {
         Invoice invoice = invoiceService.getInvoiceById(id);
         return new SingleResourceResponse<>(InvoiceResource.toResource(invoice));
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public SingleResourceResponse<InvoiceResource> updateUser(final @PathVariable Integer id, @RequestBody @Validated UpdateRequest<InvoiceCreateRequest> requestData) {
+    public SingleResourceResponse<InvoiceResource> updateUser(final @PathVariable String id, @RequestBody @Validated UpdateRequest<InvoiceCreateRequest> requestData) {
         InvoiceDto invoiceDto = requestData.getData().generateDto();
 
         Invoice updatedInvoice = invoiceService.updateInvoice(id, invoiceDto);
@@ -102,7 +99,7 @@ public class InvoiceController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteUser(final @PathVariable Integer id) {
+    public ResponseEntity<Void> deleteUser(final @PathVariable String id) {
         try {
             invoiceService.deleteInvoice(id);
             return ResponseEntity.noContent().build();
