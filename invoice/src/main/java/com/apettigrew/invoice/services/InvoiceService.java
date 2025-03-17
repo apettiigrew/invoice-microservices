@@ -14,8 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
-
 @Service
 @Transactional
 public class InvoiceService {
@@ -25,7 +23,6 @@ public class InvoiceService {
     @Autowired
     @Qualifier("skipNullModelMapper")
     private ModelMapper modelMapper;
-
 
     public Page<Invoice> getAllInvoices(Pageable pageable, com.apettigrew.invoice.enums.InvoiceStatus status) {
         if(status != null){
@@ -42,14 +39,17 @@ public class InvoiceService {
     public Invoice createInvoice(InvoiceDto invoiceDto) {
         ObjectMapper objectMapper = new ObjectMapper();
         Invoice invoice = modelMapper.map(invoiceDto, Invoice.class);
+        Invoice savedInvoice;
+        
         try {
             invoice.setSenderAddress(objectMapper.writeValueAsString(invoiceDto.getSenderAddress()));
             invoice.setClientAddress(objectMapper.writeValueAsString(invoiceDto.getClientAddress()));
-        } catch (JsonProcessingException e) {
+            savedInvoice = invoiceRepository.save(invoice);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-        return invoiceRepository.save(invoice);
+        return savedInvoice;
     }
 
     public com.apettigrew.invoice.entities.Invoice updateInvoice(String id, com.apettigrew.invoice.dtos.InvoiceDto invoiceDto) {

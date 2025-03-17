@@ -53,6 +53,7 @@ public class InvoiceController {
     private ContactInfoDto contactInfoDto;
 
 
+    @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
     public SingleResourceResponse<InvoiceResource> createInvoice(final @Valid @RequestBody CreateRequest<InvoiceCreateRequest> requestData) {
 
