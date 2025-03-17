@@ -63,6 +63,7 @@ public class InvoiceController {
         return new SingleResourceResponse<>(InvoiceResource.toResource(savedInvoice));
     }
 
+    @GetMapping
     public MultipleResourceResponse<InvoiceResource> getAllInvoices(
             @RequestHeader("ap-correlation-id")
             String correlationId,

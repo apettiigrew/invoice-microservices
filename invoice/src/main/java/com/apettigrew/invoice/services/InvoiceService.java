@@ -2,9 +2,9 @@ package com.apettigrew.invoice.services;
 
 import com.apettigrew.invoice.dtos.InvoiceDto;
 import com.apettigrew.invoice.entities.Invoice;
+import com.apettigrew.invoice.enums.InvoiceStatus;
 import com.apettigrew.invoice.exceptions.InvoiceNotFoundException;
 import com.apettigrew.invoice.respositories.InvoiceRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class InvoiceService {
     @Qualifier("skipNullModelMapper")
     private ModelMapper modelMapper;
 
-    public Page<Invoice> getAllInvoices(Pageable pageable, com.apettigrew.invoice.enums.InvoiceStatus status) {
+    public Page<Invoice> getAllInvoices(Pageable pageable, InvoiceStatus status) {
         if(status != null){
             return invoiceRepository.findByStatus(status,pageable);
         }
@@ -52,18 +52,23 @@ public class InvoiceService {
         return savedInvoice;
     }
 
-    public com.apettigrew.invoice.entities.Invoice updateInvoice(String id, com.apettigrew.invoice.dtos.InvoiceDto invoiceDto) {
-        com.apettigrew.invoice.entities.Invoice existingInvoice = invoiceRepository.findById(id).orElseThrow(() -> new RuntimeException("Invoice not found"));
+    public Invoice updateInvoice(String id, com.apettigrew.invoice.dtos.InvoiceDto invoiceDto) {
+        Invoice existingInvoice = invoiceRepository.findById(id).orElseThrow(() -> new RuntimeException("Invoice not found"));
         ObjectMapper objectMapper = new ObjectMapper();
+        int existingId = existingInvoice.getId();
         modelMapper.map(invoiceDto,existingInvoice);
+        existingInvoice.setId(existingId);
+        Invoice updatedInvoice;
+
         try {
             existingInvoice.setSenderAddress(objectMapper.writeValueAsString(invoiceDto.getSenderAddress()));
             existingInvoice.setClientAddress(objectMapper.writeValueAsString(invoiceDto.getClientAddress()));
-        } catch (JsonProcessingException e) {
+            updatedInvoice = invoiceRepository.save(existingInvoice);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-       return invoiceRepository.save(existingInvoice);
+       return updatedInvoice;
     }
 
     public void deleteInvoice(String id) {
