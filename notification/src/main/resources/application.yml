@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: "notification"
+  profiles:
+    active:
+      - "default"
+  config:
+    import: "optional:configserver:http://localhost:8071/"
   cloud:
     function:
       definition: email
@@ -20,11 +25,3 @@ spring:
     username: guest
     password: guest
     connection-timeout: 10s
-com:
-  notification:
-    sendgrid:
-      api-key: 
-      from-email: 
-      from-name: Andrew Pettigrew
-      hydration-alert-notification:
-        template-id: d-a822c9d21adb40b3a128e9b1facabf8a
