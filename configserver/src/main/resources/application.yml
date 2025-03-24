@@ -40,7 +40,7 @@ management:
       application: ${spring.application.name}
 
 encrypt:
-  key: "45D81EC1EF61DF9AD8D3E5BB397F9"
+  key: "3OMXz6k69qrhe8mb5PVFzEtJQdZqrHHP"
 
 logging:
   pattern:
