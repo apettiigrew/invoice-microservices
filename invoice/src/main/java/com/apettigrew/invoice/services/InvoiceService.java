@@ -6,9 +6,13 @@ import com.apettigrew.invoice.enums.InvoiceStatus;
 import com.apettigrew.invoice.exceptions.InvoiceNotFoundException;
 import com.apettigrew.invoice.respositories.InvoiceRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,9 +20,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class InvoiceService {
+    private static final Logger log = LoggerFactory.getLogger(InvoiceService.class);
+
     @Autowired
     private InvoiceRepository invoiceRepository;
+
+    private final StreamBridge streamBridge;
 
     @Autowired
     @Qualifier("skipNullModelMapper")
@@ -49,7 +58,17 @@ public class InvoiceService {
             throw new RuntimeException(e);
         }
 
+        sendCommunication(savedInvoice);
+
         return savedInvoice;
+    }
+
+    private void sendCommunication(Invoice invoice) {
+        var invoiceDto = modelMapper.map(invoice,InvoiceDto.class);
+
+        log.info("Sending Communication request for the details: {}", invoiceDto);
+        var result = streamBridge.send("sendCommunication-out-0", invoiceDto);
+        log.info("Is the Communication request successfully triggered ? : {}", result);
     }
 
     public Invoice updateInvoice(String id, com.apettigrew.invoice.dtos.InvoiceDto invoiceDto) {

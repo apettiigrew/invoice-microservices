@@ -1,23 +1,140 @@
-mvn compile jib:dockerBuild
+
+# Invoice Microservices App
+
+The Invoice microservice app is a simple invoice management app built to demonstrate the Microservices Architecture Pattern using SpringBoot, Spring Cloud and Docker. The project is intended as a pure learning process to try out various concepts in a microservices and distributed environment. You are free to fork it and turn into something else or even provide cool updates via pull request. I'm happy to collab.
+
+## Functional services
+
+The Invoice System is composed into three core microservices. Each application is independently deployable and structured around specific business domains.
+
+![functional-services.jpg](docs/functional-services.jpg)
+
+#### User service
+Contains general logic to create/register a user to the open source Keycloak Identity Access and Management Server.
+
+| Endpoint Name  | Method | URL                    | Description                      |  
+|---------------|--------|------------------------|----------------------------------|  
+| create-users  | POST   | `{{user_url}}`         | Create a new user account       |  
+| update-users  | PATCH  | `{{user_url}}/:id`     | Update user details             |  
+| get all users | GET    | `{{user_url}}?page=0&size=10` | Retrieve a paginated list of users |  
+| get single user | GET    | `{{user_url}}/:id`     | Retrieve details of a specific user |  
+| delete-users  | DELETE | `{{user_url}}/:id`     | Delete a user account           |  
 
 
-Service Registery (Eureka Server) - Service Discovery 
-http://localhost:8070/
-http://localhost:8070/eureka/apps
+#### Invoice service
+Performs the CRUD operations required to manage an invoice.
 
-Grafana - Monitoring and Metrics
-http://localhost:3000/?orgId=1&from=now-6h&to=now&timezone=browser
-
-Keycloack - Identity and Access Management 
-https://www.keycloak.org/
-http://localhost:7080/admin/master/console/#/master
-http://localhost:7080/realms/master/.well-known/openid-configuration
-
-
-Flyway Database Migration
-https://www.red-gate.com/products/flyway/
+| Endpoint Name       | Method  | URL                          | Description                        |  
+|---------------------|--------|------------------------------|------------------------------------|  
+| create invoice     | POST   | `{{invoice_url}}`            | Create a new invoice              |  
+| get all invoices   | GET    | `{{invoice_url}}?page=0&size=10` | Retrieve a paginated list of invoices |  
+| get single invoice | GET    | `{{invoice_url}}/:id`        | Retrieve details of a specific invoice |  
+| update invoice     | PATCH  | `{{invoice_url}}/:id`        | Update details of an invoice      |  
+| delete invoice     | DELETE | `{{invoice_url}}/:id`        | Delete an invoice                 |  
+| contact-info       | GET    | `{{invoice_url}}/contact-info` | Retrieve invoice-related contact info |  
+| bus refresh       | POST   | `{{invoice_url}}/actuator/busrefresh` | Refresh configuration bus |  
 
 
-Helpful links
-https://github.com/ch4mpy/spring-addons/tree/master/samples/tutorials
-https://www.youtube.com/watch?v=6xaNsACIq0s&list=PLHXvj3cRjbzs8TaT-RX1qJYYK2MjRro-P&index=1
+#### Notification service
+Sends an email via SendGrid api whenever an invoice has been created, updated or deleted. This servers as eg of standalone service to manage all notification in the system. Can be extended to send sms, send reminder etc.  
+Currently this is possible as Spring Cloud function that receives event from a message broker and sends an email to the client who is the recipient of an invoice.
+
+
+#### Notes
+- The User service connects directly with they Keycloak Server where all user information exists and is managed.
+- Each microservice has its own database, so there is no way to bypass API and access persistence data directly.
+- MySql is used as a primary database for each of the services.
+
+## Infrastructure
+[Spring cloud](https://spring.io/projects/spring-cloud) provides powerful tools for developers to quickly implement common distributed systems patterns  
+![stack.png](docs/stack.png)
+
+### Config service
+[Spring Cloud Config](http://cloud.spring.io/spring-cloud-config/spring-cloud-config.html) is horizontally scalable centralized configuration service for the distributed systems. It uses a pluggable repository layer that currently supports local storage, Git, and Subversion. In this project, the config server connects with a github repository to pull configuration for the different microservices. You can see shared configuration repo here [invoice-config-server](https://github.com/apettiigrew/invoice-config-server).
+
+##### Spring Cloud Config Server & Spring Cloud Bus
+With the Config Server you have a central place to manage external properties for applications across all environments. [Spring Cloud Bus](https://spring.io/projects/spring-cloud-bus), facilitates seamless communication between all connected application instances by establishing a convenient event broadcasting channel. It offers an implementation for AMQP brokers, such as RabbitMQ, and Kafka. Spring Cloud Config offers the Monitor library, which enables the triggering of configuration change events in the Config Service. By exposing the /monitor endpoint, it facilitates the propagation of these events to all listening applications via the Bus. The Monitor library allows push notifications from popular code repository providers such as GitHub.
+### Service Discovery
+
+[](https://github.com/sqshq/piggymetrics/blob/master/README.md#service-discovery)
+
+Service Discovery allows automatic detection of the network locations for all registered services. These locations might have dynamically assigned addresses due to auto-scaling, failures or upgrades.
+
+The key part of Service discovery is the Registry. In this project, we use Netflix Eureka. Eureka is a good example of the client-side discovery pattern, where client is responsible for looking up the locations of available service instances and load balancing between them.
+
+With Spring Boot, you can easily build Eureka Registry using the  `spring-cloud-starter-eureka-server` dependency,  `@EnableEurekaServer` annotation and simple configuration properties.
+
+### API Gateway
+
+API Gateway is a single entry point into the system, used to handle requests and routing them to the appropriate backend service.  In this project the gateway also servers provide security measures by only allow authorized request via OAuth2 using Keycloak as an authorization server to grant permissions to handle various request.
+
+Include the spring-cloud-starter-gateway, spring-cloud-starter-config & spring-cloud-starter-netflix-eureka-client maven dependencies.
+
+Configure the properties: In the application properties or YAML file,
+
+``` cloud:      
+	  gateway:    
+        discovery:    
+          locator:    
+            enabled: false    
+            lowerCaseServiceId: true  
+  
+  ```
+
+
+### Observablity
+Observability reveals a system's internal state through its outputs. In microservices, this is achieved by analyzing metrics, logs, and traces.
+
+In this project we managed logs by utilizing Grafana Loki & Grafan Alloy. Grafana is a popular tool for visualizing metrics, logs, and traces from a variety of sources.
+
+- Grafana Loki is a horizontally scalable, highly available, and cost-effective log aggregation system. It is designed to be easy to use and to scale to meet the needs of even the most demanding applications.
+
+- Grafana Alloy is a lightweight log agent that ships logs from your containers to Loki. It is easy to configure and can be used to collect logs from a wide variety of sources.
+
+- Prometheus acts as our monitoring system that gives developers valuable insights into the health and performance of their software
+
+All these tools feed back data that is then visualized with Grafana.
+
+### Event Driven Model
+We've added a publisher/subscriber model using RabbitMQ to distributes events to our notification service.  Our Notification service handles events via spring cloud function that subscribes to the message queue.
+
+
+
+## Let's try it out
+
+Note that starting the entire microservice architecture will require 4Gb of RAM.
+
+#### Before you start
+- Install Docker and Docker Compose.  .
+- Build the project:  `mvn package [-DskipTests]`
+
+#### Production mode
+
+[](https://github.com/sqshq/piggymetrics/blob/master/README.md#production-mode)
+
+In this mode, all latest images will be pulled from Docker Hub. Just copy  `docker-compose.yml` and hit  `docker-compose up`
+
+#### Development mode
+
+[](https://github.com/sqshq/piggymetrics/blob/master/README.md#development-mode)
+
+If you'd like to build images yourself, you have to clone the repository and build artifacts using maven. After that, run  `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up`
+
+`docker-compose.dev.yml` inherits  `docker-compose.yml` with additional possibility to build images locally and expose all containers ports for convenient development.
+
+If you'd like to start applications in Intellij Idea you need to either use  [EnvFile plugin](https://plugins.jetbrains.com/plugin/7861-envfile)  or manually export environment variables listed in  `.env` file (make sure they were exported:  `printenv`)
+
+#**### Important endpoints**
+
+[](https://github.com/sqshq/piggymetrics/blob/master/README.md#important-endpoints)
+
+- [http://localhost:80](http://localhost/)  - Gateway
+- [http://localhost:8761](http://localhost:8761/)  - Eureka Dashboard
+- [http://localhost:9000/hystrix](http://localhost:9000/hystrix)  - Hystrix Dashboard (Turbine stream link:  `http://turbine-stream-service:8080/turbine/turbine.stream`)
+- [http://localhost:15672](http://localhost:15672/)  - RabbitMq management (default login/password: guest/guest)
+
+## Contributions are welcome!
+
+[](https://github.com/sqshq/piggymetrics/blob/master/README.md#contributions-are-welcome)
+
+Invoice Microservice system is open source, and would greatly appreciate your help. Feel free to suggest and implement any improvements.

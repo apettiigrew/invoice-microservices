@@ -1,0 +1,30 @@
+server:
+  port: 9010
+
+spring:
+  application:
+    name: "notification"
+  cloud:
+    function:
+      definition: email
+    stream:
+      bindings:
+        email-in-0:
+          destination: send-communication
+          group: ${spring.application.name}
+        email-out-0:
+          destination: communication-sent
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    connection-timeout: 10s
+com:
+  notification:
+    sendgrid:
+      api-key: 
+      from-email: 
+      from-name: Andrew Pettigrew
+      hydration-alert-notification:
+        template-id: d-a822c9d21adb40b3a128e9b1facabf8a
