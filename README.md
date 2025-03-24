@@ -36,14 +36,8 @@ Performs the CRUD operations required to manage an invoice.
 
 
 #### Notification service
-Sends an email via SendGrid api whenever an invoice has been created, updated or deleted. This servers as eg of standalone service to manage all notification in the system. Can be extended to send sms, send reminder etc.  
-Currently this is possible as Spring Cloud function that receives event from a message broker and sends an email to the client who is the recipient of an invoice.
-
-
-#### Notes
-- The User service connects directly with they Keycloak Server where all user information exists and is managed.
-- Each microservice has its own database, so there is no way to bypass API and access persistence data directly.
-- MySql is used as a primary database for each of the services.
+Sends an email via SendGrid API whenever an invoice has been created, updated or deleted. This serves as an eg of standalone service to manage all notification in the system. Can be extended to send sms, send reminder etc.  
+Currently this is implemented as a Spring Cloud function that receives event from a message broker and sends an email to the client who is the recipient of an invoice.
 
 ## Infrastructure
 [Spring cloud](https://spring.io/projects/spring-cloud) provides powerful tools for developers to quickly implement common distributed systems patterns  
@@ -66,21 +60,7 @@ With Spring Boot, you can easily build Eureka Registry using the  `spring-cloud-
 
 ### API Gateway
 
-API Gateway is a single entry point into the system, used to handle requests and routing them to the appropriate backend service.  In this project the gateway also servers provide security measures by only allow authorized request via OAuth2 using Keycloak as an authorization server to grant permissions to handle various request.
-
-Include the spring-cloud-starter-gateway, spring-cloud-starter-config & spring-cloud-starter-netflix-eureka-client maven dependencies.
-
-Configure the properties: In the application properties or YAML file,
-
-``` cloud:      
-	  gateway:    
-        discovery:    
-          locator:    
-            enabled: false    
-            lowerCaseServiceId: true  
-  
-  ```
-
+API Gateway is a single entry point into the system, used to handle requests and routing them to the appropriate backend service.  In this project the gateway also provide security measures by only allow authorized request via OAuth2 using Keycloak as an authorization server to grant permissions to handle various request.
 
 ### Observablity
 Observability reveals a system's internal state through its outputs. In microservices, this is achieved by analyzing metrics, logs, and traces.
@@ -93,38 +73,12 @@ In this project we managed logs by utilizing Grafana Loki & Grafan Alloy. Grafan
 
 - Prometheus acts as our monitoring system that gives developers valuable insights into the health and performance of their software
 
-All these tools feed back data that is then visualized with Grafana.
+All these tools feed data into Grafana that allows us to visualize and analyze the data in a user-friendly way.
 
 ### Event Driven Model
 We've added a publisher/subscriber model using RabbitMQ to distributes events to our notification service.  Our Notification service handles events via spring cloud function that subscribes to the message queue.
 
-
-
-## Let's try it out
-
-Note that starting the entire microservice architecture will require 4Gb of RAM.
-
-#### Before you start
-- Install Docker and Docker Compose.  .
-- Build the project:  `mvn package [-DskipTests]`
-
-#### Production mode
-
-[](https://github.com/sqshq/piggymetrics/blob/master/README.md#production-mode)
-
-In this mode, all latest images will be pulled from Docker Hub. Just copy  `docker-compose.yml` and hit  `docker-compose up`
-
-#### Development mode
-
-[](https://github.com/sqshq/piggymetrics/blob/master/README.md#development-mode)
-
-If you'd like to build images yourself, you have to clone the repository and build artifacts using maven. After that, run  `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up`
-
-`docker-compose.dev.yml` inherits  `docker-compose.yml` with additional possibility to build images locally and expose all containers ports for convenient development.
-
-If you'd like to start applications in Intellij Idea you need to either use  [EnvFile plugin](https://plugins.jetbrains.com/plugin/7861-envfile)  or manually export environment variables listed in  `.env` file (make sure they were exported:  `printenv`)
-
-#**### Important endpoints**
+### Important endpoints
 
 [](https://github.com/sqshq/piggymetrics/blob/master/README.md#important-endpoints)
 
