@@ -72,9 +72,6 @@ management:
     tags:
       application: ${spring.application.name}
 
-build:
-  version: "3.0"
-
 eureka:
   instance:
     preferIpAddress: true

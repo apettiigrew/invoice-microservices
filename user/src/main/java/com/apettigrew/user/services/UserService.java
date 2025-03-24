@@ -85,7 +85,6 @@ public class UserService {
     }
 
     public UserDto updateUser(String id,UserDto userDto){
-
         Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
         UserRepresentation userRep = keycloak.realm(realm).users().get(id).toRepresentation();
         userRep.setFirstName(userDto.getFirstName());

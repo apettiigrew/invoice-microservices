@@ -7,7 +7,7 @@ The Invoice microservice app is a simple invoice management app built to demonst
 
 The Invoice System is composed into three core microservices. Each application is independently deployable and structured around specific business domains.
 
-![functional-services.jpg](docs/functional-services.jpg)
+**![functional-services.jpg](docs/functional-services.jpg)**
 
 #### User service
 Contains general logic to create/register a user to the open source Keycloak Identity Access and Management Server.
@@ -82,10 +82,11 @@ We've added a publisher/subscriber model using RabbitMQ to distributes events to
 
 [](https://github.com/sqshq/piggymetrics/blob/master/README.md#important-endpoints)
 
-- [http://localhost:80](http://localhost/)  - Gateway
-- [http://localhost:8761](http://localhost:8761/)  - Eureka Dashboard
-- [http://localhost:9000/hystrix](http://localhost:9000/hystrix)  - Hystrix Dashboard (Turbine stream link:  `http://turbine-stream-service:8080/turbine/turbine.stream`)
-- [http://localhost:15672](http://localhost:15672/)  - RabbitMq management (default login/password: guest/guest)
+#### Config Server Links
+Eg. 
+- http://localhost:8071/invoices/default
+- http://localhost:8071/invoices/qa
+- http://localhost:8071/invoices/prod
 
 ## Contributions are welcome!
 

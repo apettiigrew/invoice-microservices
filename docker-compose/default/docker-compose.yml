@@ -242,7 +242,7 @@ services:
       service: network-deploy-service
 
   eurekaserver:
-    image: "pettiville/eurekaserver:s1"
+    image: "pettiville/eurekaserver:v1"
     container_name: eurekaserver-ms
     ports:
       - "8070:8070"
@@ -263,7 +263,7 @@ services:
       OTEL_SERVICE_NAME: "eurekaserver"
 
   configserver:
-    image: "pettiville/configserver:s1"
+    image: "pettiville/configserver:v1"
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -283,7 +283,7 @@ services:
       OTEL_SERVICE_NAME: "configserver"
 
   gatewayserver:
-    image: "pettiville/gatewayserver:s1"
+    image: "pettiville/gatewayserver:v1"
     container_name: gatewayserver-ms
     ports:
       - "8072:8072"
@@ -326,7 +326,7 @@ services:
       service: microservice-db-config
 
   invoices:
-    image: "pettiville/invoices:s1"
+    image: "pettiville/invoices:v1"
     container_name: invoices-ms
     ports:
       - "8080:8080"
@@ -361,7 +361,7 @@ services:
       service: microservice-eureka-config
 
   users:
-    image: "pettiville/users:s1"
+    image: "pettiville/users:v1"
     container_name: users-ms
     ports:
       - "8081:8081"
