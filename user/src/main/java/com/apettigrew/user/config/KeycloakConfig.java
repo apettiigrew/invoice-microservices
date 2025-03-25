@@ -1,31 +1,27 @@
 package com.apettigrew.user.config;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@AllArgsConstructor
-@EnableConfigurationProperties(KeycloakConfigProperties.class)
+@Configuration
+@RequiredArgsConstructor
 public class KeycloakConfig {
 
-    static KeycloakConfigProperties keycloakConfigProperties;
-    static Keycloak keycloak = null;
+    private final KeycloakConfigProperties keycloakConfigProperties;  // Inject properties
 
-
-    public static Keycloak getKeycloakInstance() {
-
-        if(keycloak == null) {
-            keycloak = KeycloakBuilder
-                    .builder()
-                    .serverUrl(keycloakConfigProperties.getServerUrl())
-                    .realm(keycloakConfigProperties.getRealm())
-                    .clientId(keycloakConfigProperties.getClientId())
-                    .grantType(OAuth2Constants.PASSWORD)
-                    .username(keycloakConfigProperties.getUserName())
-                    .password(keycloakConfigProperties.getPassword()).build();
-        }
-        return keycloak;
+    @Bean
+    public Keycloak keycloak() {
+        return KeycloakBuilder.builder()
+                .serverUrl(keycloakConfigProperties.getServerUrl())
+                .realm(keycloakConfigProperties.getRealm())
+                .clientId(keycloakConfigProperties.getClientId())
+                .grantType(OAuth2Constants.PASSWORD)
+                .username(keycloakConfigProperties.getUserName())
+                .password(keycloakConfigProperties.getPassword())
+                .build();
     }
 }

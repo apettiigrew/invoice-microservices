@@ -1,11 +1,10 @@
 package com.apettigrew.user.services;
 
-import com.apettigrew.user.config.KeycloakConfig;
 import com.apettigrew.user.config.KeycloakConfigProperties;
 import com.apettigrew.user.dtos.UserDto;
 import com.apettigrew.user.dtos.UserRegisterDto;
 import jakarta.ws.rs.core.Response;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UserResource;
@@ -16,27 +15,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
 @Service
-@EnableConfigurationProperties(KeycloakConfigProperties.class)
+@RequiredArgsConstructor
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    private final KeycloakConfigProperties keycloakConfigProperties;
+    private final Keycloak keycloak;
+    private final KeycloakConfigProperties keycloakConfigProperties; // Inject config properties
 
     @Autowired
     @Qualifier("skipNullModelMapper")
     private ModelMapper modelMapper;
 
     public UserDto getKeycloakUserbyId(String id) {
-        Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
+//        Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
         UserRepresentation userRep = keycloak.realm(keycloakConfigProperties.getRealm()).users().get(id).toRepresentation();
         return modelMapper.map(userRep, UserDto.class);
     }
@@ -45,7 +43,7 @@ public class UserService {
         int first = (int) pageable.getOffset();
         int max = pageable.getPageSize();
 
-        Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
+//        Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
         List<UserRepresentation> userRepresentations = keycloak.realm(keycloakConfigProperties.getRealm()).users().list(first, max);
 
         List<UserDto> users = new ArrayList<>();
@@ -72,7 +70,7 @@ public class UserService {
         creds.add(cred);
         userRep.setCredentials(creds);
 
-        Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
+//        Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
         try  {
             Response response = keycloak.realm(keycloakConfigProperties.getRealm()).users().create(userRep);
             String userId = CreatedResponseUtil.getCreatedId(response);
@@ -85,13 +83,13 @@ public class UserService {
     }
 
     public UserDto getUserById(String id){
-        Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
+//        Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
         UserRepresentation userRep = keycloak.realm(keycloakConfigProperties.getRealm()).users().get(id).toRepresentation();
         return modelMapper.map(userRep, UserDto.class);
     }
 
     public UserDto updateUser(String id,UserDto userDto){
-        Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
+//        Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
         UserRepresentation userRep = keycloak.realm(keycloakConfigProperties.getRealm()).users().get(id).toRepresentation();
         userRep.setFirstName(userDto.getFirstName());
         userRep.setLastName(userDto.getLastName());

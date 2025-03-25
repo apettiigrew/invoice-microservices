@@ -88,6 +88,14 @@ Eg.
 - http://localhost:8071/invoices/qa
 - http://localhost:8071/invoices/prod
 
+#### Keycloak Server
+- http://localhost:7080/
+
+#### Eureka Server (Service Discovery)
+- http://localhost:8070/
+
+
+
 ## Contributions are welcome!
 
 [](https://github.com/sqshq/piggymetrics/blob/master/README.md#contributions-are-welcome)
