@@ -1,30 +1,30 @@
 package com.apettigrew.user.config;
 
+import lombok.AllArgsConstructor;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
+@AllArgsConstructor
+@EnableConfigurationProperties(KeycloakConfigProperties.class)
 public class KeycloakConfig {
 
+    static KeycloakConfigProperties keycloakConfigProperties;
     static Keycloak keycloak = null;
-    final static String serverUrl = "http://localhost:7080";
-    public final static String realm = "development";
-    final static String clientId = "admin-cli";
-    final static String userName = "admin";
-    final static String password = "1234";
 
-    public KeycloakConfig() {}
 
     public static Keycloak getKeycloakInstance() {
+
         if(keycloak == null) {
             keycloak = KeycloakBuilder
                     .builder()
-                    .serverUrl(serverUrl)
-                    .realm(realm)
-                    .clientId(clientId)
+                    .serverUrl(keycloakConfigProperties.getServerUrl())
+                    .realm(keycloakConfigProperties.getRealm())
+                    .clientId(keycloakConfigProperties.getClientId())
                     .grantType(OAuth2Constants.PASSWORD)
-                    .username(userName)
-                    .password(password).build();
+                    .username(keycloakConfigProperties.getUserName())
+                    .password(keycloakConfigProperties.getPassword()).build();
         }
         return keycloak;
     }

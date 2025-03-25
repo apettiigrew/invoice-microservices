@@ -1,6 +1,7 @@
-package com.apettigrew.user.jsonapi;
+package com.apettigrew.user.jsonapi.resources;
 
 import com.apettigrew.user.ResourceTypes;
+import com.apettigrew.user.jsonapi.LoginResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;

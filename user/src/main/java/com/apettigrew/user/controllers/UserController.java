@@ -6,7 +6,7 @@ import com.apettigrew.user.dtos.UserRegisterDto;
 import com.apettigrew.user.jsonapi.JsonApiConstants;
 import com.apettigrew.user.jsonapi.MultipleResourceResponse;
 import com.apettigrew.user.jsonapi.SingleResourceResponse;
-import com.apettigrew.user.jsonapi.UserResource;
+import com.apettigrew.user.jsonapi.resources.UserResource;
 import com.apettigrew.user.jsonapi.requests.CreateRequest;
 import com.apettigrew.user.jsonapi.requests.UpdateRequest;
 import com.apettigrew.user.jsonapi.requests.UserCreateRequest;

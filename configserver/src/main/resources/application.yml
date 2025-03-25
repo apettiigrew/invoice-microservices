@@ -10,7 +10,7 @@ spring:
     config:
       server:
         git:
-          uri: "https://github.com/apettiigrew/invoice-config-server.git"
+          uri: "https://github.com/apettiigrew/invoice-config.git"
           default-label: main
           timeout: 5
           clone-on-start: true

@@ -2,7 +2,7 @@ package com.apettigrew.user.jsonapi.requests;
 
 import com.apettigrew.user.ResourceTypes;
 import com.apettigrew.user.dtos.UserLoginDto;
-import com.apettigrew.user.jsonapi.CreateResource;
+import com.apettigrew.user.jsonapi.resources.CreateResource;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
