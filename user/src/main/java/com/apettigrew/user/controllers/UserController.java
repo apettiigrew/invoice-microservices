@@ -1,11 +1,12 @@
 package com.apettigrew.user.controllers;
 
+import com.apettigrew.user.dtos.ContactInfoDto;
 import com.apettigrew.user.dtos.UserDto;
 import com.apettigrew.user.dtos.UserRegisterDto;
 import com.apettigrew.user.jsonapi.JsonApiConstants;
 import com.apettigrew.user.jsonapi.MultipleResourceResponse;
 import com.apettigrew.user.jsonapi.SingleResourceResponse;
-import com.apettigrew.user.jsonapi.UserResource;
+import com.apettigrew.user.jsonapi.resources.UserResource;
 import com.apettigrew.user.jsonapi.requests.CreateRequest;
 import com.apettigrew.user.jsonapi.requests.UpdateRequest;
 import com.apettigrew.user.jsonapi.requests.UserCreateRequest;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +34,9 @@ import java.util.stream.Collectors;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ContactInfoDto contactInfoDto;
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -63,6 +68,13 @@ public class UserController {
         var user = userDto.getData().generateDto();
         UserDto updatedUser = userService.updateUser(id,user);
         return new SingleResourceResponse<>(UserResource.toResource(updatedUser));
+    }
+
+    @GetMapping("/contact-info")
+    public ResponseEntity<ContactInfoDto> getContactInfo() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(contactInfoDto);
     }
 
 //    @DeleteMapping("/{uuid}")

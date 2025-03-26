@@ -1,3 +1,6 @@
+server:
+  port: 8071
+
 spring:
   application:
     name: "configserver"
@@ -7,7 +10,7 @@ spring:
     config:
       server:
         git:
-          uri: "https://github.com/apettiigrew/invoice-config-server.git"
+          uri: "https://github.com/apettiigrew/invoice-config.git"
           default-label: main
           timeout: 5
           clone-on-start: true
@@ -37,10 +40,7 @@ management:
       application: ${spring.application.name}
 
 encrypt:
-  key: "45D81EC1EF61DF9AD8D3E5BB397F9"
-
-server:
-  port: 8071
+  key: "3OMXz6k69qrhe8mb5PVFzEtJQdZqrHHP"
 
 logging:
   pattern:

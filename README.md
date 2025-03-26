@@ -7,7 +7,7 @@ The Invoice microservice app is a simple invoice management app built to demonst
 
 The Invoice System is composed into three core microservices. Each application is independently deployable and structured around specific business domains.
 
-![functional-services.jpg](docs/functional-services.jpg)
+**![functional-services.jpg](docs/assets/functional-services.jpg)**
 
 #### User service
 Contains general logic to create/register a user to the open source Keycloak Identity Access and Management Server.
@@ -41,9 +41,9 @@ Currently this is implemented as a Spring Cloud function that receives event fro
 
 ## Infrastructure
 [Spring cloud](https://spring.io/projects/spring-cloud) provides powerful tools for developers to quickly implement common distributed systems patterns  
-![stack.png](docs/stack.png)
+![stack.png](docs/assets/stack.png)
 
-### Config service
+### Config Server
 [Spring Cloud Config](http://cloud.spring.io/spring-cloud-config/spring-cloud-config.html) is horizontally scalable centralized configuration service for the distributed systems. It uses a pluggable repository layer that currently supports local storage, Git, and Subversion. In this project, the config server connects with a github repository to pull configuration for the different microservices. You can see shared configuration repo here [invoice-config-server](https://github.com/apettiigrew/invoice-config-server).
 
 ##### Spring Cloud Config Server & Spring Cloud Bus
@@ -82,10 +82,19 @@ We've added a publisher/subscriber model using RabbitMQ to distributes events to
 
 [](https://github.com/sqshq/piggymetrics/blob/master/README.md#important-endpoints)
 
-- [http://localhost:80](http://localhost/)  - Gateway
-- [http://localhost:8761](http://localhost:8761/)  - Eureka Dashboard
-- [http://localhost:9000/hystrix](http://localhost:9000/hystrix)  - Hystrix Dashboard (Turbine stream link:  `http://turbine-stream-service:8080/turbine/turbine.stream`)
-- [http://localhost:15672](http://localhost:15672/)  - RabbitMq management (default login/password: guest/guest)
+#### Config Server Links
+Eg. 
+- http://localhost:8071/invoices/default
+- http://localhost:8071/invoices/qa
+- http://localhost:8071/invoices/prod
+
+#### Keycloak Server
+- http://localhost:7080/
+
+#### Eureka Server (Service Discovery)
+- http://localhost:8070/
+
+
 
 ## Contributions are welcome!
 

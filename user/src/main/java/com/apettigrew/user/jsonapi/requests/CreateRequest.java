@@ -1,6 +1,6 @@
 package com.apettigrew.user.jsonapi.requests;
 
-import com.apettigrew.user.jsonapi.CreateResource;
+import com.apettigrew.user.jsonapi.resources.CreateResource;
 import com.apettigrew.user.jsonapi.ResourceDto;
 import jakarta.validation.Valid;
 import lombok.Getter;

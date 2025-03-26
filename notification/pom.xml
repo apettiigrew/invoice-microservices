@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.4.3</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>com.apettigrew</groupId>
 	<artifactId>notification</artifactId>
@@ -33,6 +33,14 @@
 		<otelVersion>2.11.0</otelVersion>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bus-amqp</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
@@ -113,7 +121,7 @@
 				<version>3.4.2</version>
 				<configuration>
 					<to>
-						<image>${owner}/${project.artifactId}:s1</image>
+						<image>${owner}/${project.artifactId}:v1</image>
 					</to>
 				</configuration>
 			</plugin>
