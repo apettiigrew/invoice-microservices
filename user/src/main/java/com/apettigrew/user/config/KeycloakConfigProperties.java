@@ -15,5 +15,8 @@ public class KeycloakConfigProperties {
     private String clientId;
     private String userName;
     private String password;
+    private String appClientId;
+    private String appClientSecret;
+    private String authServerUrl;
 }
 

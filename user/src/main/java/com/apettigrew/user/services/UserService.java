@@ -1,6 +1,7 @@
 package com.apettigrew.user.services;
 
 import com.apettigrew.user.config.KeycloakConfigProperties;
+import com.apettigrew.user.dtos.KeycloakTokenDto;
 import com.apettigrew.user.dtos.UserDto;
 import com.apettigrew.user.dtos.UserRegisterDto;
 import jakarta.ws.rs.core.Response;
@@ -16,7 +17,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,13 +33,38 @@ public class UserService {
 
     private final Keycloak keycloak;
     private final KeycloakConfigProperties keycloakConfigProperties; // Inject config properties
+    private final RestClient restClient;
 
     @Autowired
     @Qualifier("skipNullModelMapper")
     private ModelMapper modelMapper;
 
+    public KeycloakTokenDto login(String username, String password) {
+
+        String tokenUrl = keycloakConfigProperties.getServerUrl() + "/realms/" + keycloakConfigProperties.getRealm() + "/protocol/openid-connect/token";
+
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("grant_type", "password");
+        map.add("client_id", keycloakConfigProperties.getAppClientId());
+        map.add("client_secret", keycloakConfigProperties.getAppClientSecret());
+        map.add("username", username);
+        map.add("password", password);
+        map.add("scope","openid email profile");
+        try {
+            var response =  restClient.post()
+                    .uri(tokenUrl)
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(map) // Send the MultiValueMap directly
+                    .retrieve()
+                    .toEntity(KeycloakTokenDto.class);
+
+            return response.getBody();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public UserDto getKeycloakUserbyId(String id) {
-//        Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
         UserRepresentation userRep = keycloak.realm(keycloakConfigProperties.getRealm()).users().get(id).toRepresentation();
         return modelMapper.map(userRep, UserDto.class);
     }
@@ -42,8 +72,6 @@ public class UserService {
     public List<UserDto> getAllUsers(Pageable pageable) {
         int first = (int) pageable.getOffset();
         int max = pageable.getPageSize();
-
-//        Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
         List<UserRepresentation> userRepresentations = keycloak.realm(keycloakConfigProperties.getRealm()).users().list(first, max);
 
         List<UserDto> users = new ArrayList<>();
@@ -70,12 +98,11 @@ public class UserService {
         creds.add(cred);
         userRep.setCredentials(creds);
 
-//        Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
         try  {
             Response response = keycloak.realm(keycloakConfigProperties.getRealm()).users().create(userRep);
             String userId = CreatedResponseUtil.getCreatedId(response);
             UserResource userResource = keycloak.realm(keycloakConfigProperties.getRealm()).users().get(userId);
-        }catch(Exception e){
+        } catch(Exception e){
             logger.error(e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
@@ -83,13 +110,11 @@ public class UserService {
     }
 
     public UserDto getUserById(String id){
-//        Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
         UserRepresentation userRep = keycloak.realm(keycloakConfigProperties.getRealm()).users().get(id).toRepresentation();
         return modelMapper.map(userRep, UserDto.class);
     }
 
     public UserDto updateUser(String id,UserDto userDto){
-//        Keycloak keycloak = KeycloakConfig.getKeycloakInstance();
         UserRepresentation userRep = keycloak.realm(keycloakConfigProperties.getRealm()).users().get(id).toRepresentation();
         userRep.setFirstName(userDto.getFirstName());
         userRep.setLastName(userDto.getLastName());

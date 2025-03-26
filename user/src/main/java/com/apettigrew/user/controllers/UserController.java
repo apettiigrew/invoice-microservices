@@ -6,13 +6,12 @@ import com.apettigrew.user.dtos.UserRegisterDto;
 import com.apettigrew.user.jsonapi.JsonApiConstants;
 import com.apettigrew.user.jsonapi.MultipleResourceResponse;
 import com.apettigrew.user.jsonapi.SingleResourceResponse;
-import com.apettigrew.user.jsonapi.resources.UserResource;
 import com.apettigrew.user.jsonapi.requests.CreateRequest;
 import com.apettigrew.user.jsonapi.requests.UpdateRequest;
 import com.apettigrew.user.jsonapi.requests.UserCreateRequest;
 import com.apettigrew.user.jsonapi.requests.UserUpdateRequest;
+import com.apettigrew.user.jsonapi.resources.UserResource;
 import com.apettigrew.user.services.UserService;
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api", produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
-@AllArgsConstructor
 @Validated
 public class UserController {
     @Autowired
