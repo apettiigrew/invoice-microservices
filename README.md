@@ -62,7 +62,7 @@ With Spring Boot, you can easily build Eureka Registry using the  `spring-cloud-
 
 API Gateway is a single entry point into the system, used to handle requests and routing them to the appropriate backend service.  In this project the gateway also provide security measures by only allow authorized request via OAuth2 using Keycloak as an authorization server to grant permissions to handle various request.
 
-### Observablity
+### Observability
 Observability reveals a system's internal state through its outputs. In microservices, this is achieved by analyzing metrics, logs, and traces.
 
 In this project we managed logs by utilizing Grafana Loki & Grafan Alloy. Grafana is a popular tool for visualizing metrics, logs, and traces from a variety of sources.
