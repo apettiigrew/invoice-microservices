@@ -37,9 +37,6 @@ management:
     tags:
       application: ${spring.application.name}
 
-build:
-  version: "3.0"
-
 eureka:
   instance:
     preferIpAddress: true
@@ -52,7 +49,7 @@ eureka:
 info:
   app:
     name: "users"
-    description: "Apettigrew Users Application"
+    description: "Users Application"
     version: "1.0.0"
 
 logging:

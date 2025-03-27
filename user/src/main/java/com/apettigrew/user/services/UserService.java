@@ -52,11 +52,11 @@ public class UserService {
         map.add("scope","openid email profile");
         try {
             var response =  restClient.post()
-                    .uri(tokenUrl)
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .body(map) // Send the MultiValueMap directly
-                    .retrieve()
-                    .toEntity(KeycloakTokenDto.class);
+                .uri(tokenUrl)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(map)
+                .retrieve()
+                .toEntity(KeycloakTokenDto.class);
 
             return response.getBody();
         } catch (Exception e) {

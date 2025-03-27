@@ -18,7 +18,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 public class UserDto implements ResourceDto<UUID> {
-
     @JsonIgnore
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String id;

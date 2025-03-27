@@ -7,7 +7,6 @@ import lombok.Getter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
 public class SingleResourceResponse <T extends Resource<? extends ResourceDto>> {
-
     private final T data;
 
     public SingleResourceResponse(final T resource){

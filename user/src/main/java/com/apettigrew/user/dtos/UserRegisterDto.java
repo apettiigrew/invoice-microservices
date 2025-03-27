@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Setter
@@ -34,11 +33,4 @@ public class UserRegisterDto implements ResourceDto<UUID> {
     @NotNull(message = "Password is required")
     @Size(max = 255, message ="This field can only be 255 characters long")
     private String password;
-
-//    @NotNull(message = "Role is required")
-//    @Size(max = 255, message ="This field can only be 255 characters long")
-//    private String role;
-
-//    @NotNull(message = "birthDate is required")
-//    private LocalDate birthDate;
 }

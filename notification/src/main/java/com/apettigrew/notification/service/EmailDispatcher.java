@@ -21,7 +21,6 @@ import java.io.IOException;
 @Service
 @EnableConfigurationProperties(SendGridConfigurationProperties.class)
 public class EmailDispatcher {
-
     private static final String EMAIL_ENDPOINT = "mail/send";
 
     private final SendGrid sendGrid;
@@ -38,7 +37,7 @@ public class EmailDispatcher {
 
     public void dispatchHydrationAlert(String emailId, String username) throws IOException {
         Email toEmail = new Email(emailId);
-        String templateId = sendGridConfigurationProperties.getHydrationAlertNotification().getTemplateId();
+        String templateId = sendGridConfigurationProperties.getDynamicTemplate().getTemplateId();
 
         DynamicTemplatePersonalization personalization = new DynamicTemplatePersonalization();
         personalization.add("clientName", username);

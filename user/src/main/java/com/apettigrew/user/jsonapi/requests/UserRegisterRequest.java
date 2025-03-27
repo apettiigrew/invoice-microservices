@@ -12,7 +12,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserRegisterRequest implements CreateResource<UserRegisterDto> {
-
     @Pattern(regexp = ResourceTypes.USERS)
     @NotNull
     private final String type = ResourceTypes.USERS;

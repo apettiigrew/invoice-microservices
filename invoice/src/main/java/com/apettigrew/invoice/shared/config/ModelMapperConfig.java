@@ -16,7 +16,6 @@ public class ModelMapperConfig {
     public ModelMapper skipNullModelMapper() {
         final var modelMapper = new ModelMapper();
 
-        // Configure ModelMapper
         modelMapper.getConfiguration().setSkipNullEnabled(true);
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT);

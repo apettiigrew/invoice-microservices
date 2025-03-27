@@ -16,7 +16,7 @@ import java.util.Map;
 public class InvoiceRestExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<com.apettigrew.invoice.exceptions.InvoiceErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
+    public ResponseEntity<InvoiceErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
         List<String> errors = new ArrayList<String>();
         Map<String,String> errorMap = new HashMap<>();
 
@@ -24,7 +24,7 @@ public class InvoiceRestExceptionHandler {
             errorMap.put(getLastField(error.getField()),error.getDefaultMessage());
         }
 
-        com.apettigrew.invoice.exceptions.InvoiceErrorResponse error = new com.apettigrew.invoice.exceptions.InvoiceErrorResponse();
+        InvoiceErrorResponse error = new InvoiceErrorResponse();
         error.setStatus(HttpStatus.BAD_REQUEST.value());
         error.setMessage("Validation failed. Please correct the errors and try again.");
         error.setErrors(errorMap);
@@ -47,8 +47,8 @@ public class InvoiceRestExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<com.apettigrew.invoice.exceptions.InvoiceErrorResponse> handleException(com.apettigrew.invoice.exceptions.InvoiceNotFoundException exception){
-        com.apettigrew.invoice.exceptions.InvoiceErrorResponse error = new com.apettigrew.invoice.exceptions.InvoiceErrorResponse();
+    public ResponseEntity<InvoiceErrorResponse> handleException(InvoiceNotFoundException exception){
+        InvoiceErrorResponse error = new InvoiceErrorResponse();
         error.setStatus(HttpStatus.NOT_FOUND.value());
         error.setMessage(exception.getMessage());
         error.setTimeStamp(System.currentTimeMillis());
@@ -57,8 +57,8 @@ public class InvoiceRestExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<com.apettigrew.invoice.exceptions.InvoiceErrorResponse> handleException(Exception exception){
-        com.apettigrew.invoice.exceptions.InvoiceErrorResponse error = new com.apettigrew.invoice.exceptions.InvoiceErrorResponse();
+    public ResponseEntity<InvoiceErrorResponse> handleException(Exception exception){
+        InvoiceErrorResponse error = new InvoiceErrorResponse();
         error.setStatus(HttpStatus.BAD_REQUEST.value());
         error.setMessage(exception.getMessage());
         error.setTimeStamp(System.currentTimeMillis());

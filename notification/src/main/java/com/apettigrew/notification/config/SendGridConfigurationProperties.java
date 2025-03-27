@@ -26,11 +26,11 @@ public class SendGridConfigurationProperties {
     private String fromName;
 
     @Valid
-    private HydrationAlertNotification hydrationAlertNotification = new HydrationAlertNotification();
+    private DynamicTemplate dynamicTemplate = new DynamicTemplate();
 
     @Getter
     @Setter
-    public class HydrationAlertNotification {
+    public class DynamicTemplate {
 
         @NotBlank(message = "Template-id must be configured")
         @Pattern(regexp = "^d-[a-f0-9]{32}$", message = "Invalid template ID format")

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DynamicTemplatePersonalization extends Personalization {
-
     private final Map<String, Object> dynamicTemplateData = new HashMap<>();
 
     public void add(String key, String value) {
@@ -17,5 +16,4 @@ public class DynamicTemplatePersonalization extends Personalization {
     public Map<String, Object> getDynamicTemplateData() {
         return dynamicTemplateData;
     }
-
 }
