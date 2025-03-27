@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b1a2ebad-074a-4ab2-84cc-fc1c2ed89049",
+		"_postman_id": "8aa9b9be-e637-4a5b-9c6d-11591b58de33",
 		"name": "invoice-microservices",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "2045835"
@@ -58,7 +58,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"data\": {\n    \"type\": \"users\",\n    \"attributes\": {\n      \"username\":\"petti@gmail.com\",\n      \"password\": \"123456\"\n    }\n  }\n}",
+							"raw": "{\n  \"data\": {\n    \"type\": \"users\",\n    \"attributes\": {\n      \"username\":\"pettigrewio\",\n      \"password\": \"12345\"\n    }\n  }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -66,41 +66,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/login",
+							"raw": "{{user_url}}/login",
 							"host": [
-								"{{base_url}}"
+								"{{user_url}}"
 							],
 							"path": [
 								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "register-users",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"data\": {\n    \"type\": \"users\",\n    \"attributes\": {\n      \"username\":\"petti@gmail.com\",\n      \"firstName\": \"Andrew\",\n      \"lastName\": \"Pettigrew\",\n      \"password\": \"123456\",\n      \"role\":\"read\",\n      \"birthDate\": \"2000-01-01\"\n    }\n  }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/register",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"register"
 							]
 						}
 					},
@@ -118,7 +89,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"data\": {\n    \"type\": \"users\",\n    \"attributes\": {\n      \"email\": \"pettiville9777@gmail.com\",\n      \"password\": \"12345\",\n      \"userName\": \"pettigrew\",\n      \"firstName\": \"Andrew\",\n      \"lastName\": \"Pettigrew\",\n      \"birthDate\": \"2000-01-01\"\n    }\n  }\n}",
+							"raw": "{\n  \"data\": {\n    \"type\": \"users\",\n    \"attributes\": {\n      \"email\": \"pettiville99@gmail.com\",\n      \"password\": \"12345\",\n      \"userName\": \"pettigrewio\",\n      \"firstName\": \"Andrew\",\n      \"lastName\": \"Pettigrew\"\n    }\n  }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -159,7 +130,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "3f1d8a3a-33dc-4bfa-9fda-ecdf89f3b61d"
+									"value": "e9572a47-7f4c-4f75-84c3-8e1841043284"
 								}
 							]
 						}
@@ -211,7 +182,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "3f1d8a3a-33dc-4bfa-9feda-ecdf89f3b61d"
+									"value": "c0f53cd3-422b-47be-9c8c-553e1cf2e35f"
 								}
 							]
 						}
@@ -219,23 +190,29 @@
 					"response": []
 				},
 				{
-					"name": "delete-users",
+					"name": "contact-info",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "DELETE",
+						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{user_url}}/:id",
+							"raw": "{{user_url}}/contact-info",
 							"host": [
 								"{{user_url}}"
 							],
 							"path": [
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": ""
-								}
+								"contact-info"
 							]
 						}
 					},
@@ -505,45 +482,13 @@
 			"name": "configserver",
 			"item": [
 				{
-					"name": "invoice",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "test@tt.com",
-							"options": {
-								"raw": {
-									"language": "text"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8071/invoices/default",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8071",
-							"path": [
-								"invoices",
-								"default"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "encrypt",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "test@ddt.com",
+							"raw": "E6INV8BIANEBVCR7i0I7fBVpFI879u8G",
 							"options": {
 								"raw": {
 									"language": "text"
@@ -662,6 +607,509 @@
 			"name": "gatewayserver",
 			"item": [
 				{
+					"name": "user",
+					"item": [
+						{
+							"name": "users contact-info",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "client_authentication",
+											"value": "body",
+											"type": "string"
+										},
+										{
+											"key": "clientSecret",
+											"value": "RVISEsY2dtD1ylBggUVaQSvBh0B1ZGnf",
+											"type": "string"
+										},
+										{
+											"key": "clientId",
+											"value": "petti-auth-code-grant-type-flow",
+											"type": "string"
+										},
+										{
+											"key": "accessTokenUrl",
+											"value": "http://localhost:7080/realms/development/protocol/openid-connect/token",
+											"type": "string"
+										},
+										{
+											"key": "authUrl",
+											"value": "http://localhost:7080/realms/development/protocol/openid-connect/auth",
+											"type": "string"
+										},
+										{
+											"key": "tokenType",
+											"value": "Bearer",
+											"type": "string"
+										},
+										{
+											"key": "state",
+											"value": "ew34er-344fgfg-5gfgfg",
+											"type": "string"
+										},
+										{
+											"key": "tokenName",
+											"value": "authcode_accesstoken",
+											"type": "string"
+										},
+										{
+											"key": "useBrowser",
+											"value": true,
+											"type": "boolean"
+										},
+										{
+											"key": "grant_type",
+											"value": "authorization_code",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										},
+										{
+											"key": "scope",
+											"value": "openid email profile",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_gateway_url}}/petti/users/api/contact-info",
+									"host": [
+										"{{api_gateway_url}}"
+									],
+									"path": [
+										"petti",
+										"users",
+										"api",
+										"contact-info"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create users",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"data\": {\n    \"type\": \"users\",\n    \"attributes\": {\n      \"email\": \"pettiville9777@gmail.com\",\n      \"password\": \"12345\",\n      \"userName\": \"pettigrew\",\n      \"firstName\": \"Andrew\",\n      \"lastName\": \"Pettigrew\"\n    }\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_gateway_url}}/petti/users/api",
+									"host": [
+										"{{api_gateway_url}}"
+									],
+									"path": [
+										"petti",
+										"users",
+										"api"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "login-users",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var data = pm.response.json();",
+											"var token = data.access_token;",
+											"if (token) {",
+											"    // Store the 1token in a global variable",
+											"    pm.collectionVariables.set(\"jwt_token\", token);",
+											"    ",
+											"    // Log token for debugging",
+											"    console.log(\"JWT Token stored:\", token);",
+											"} else {",
+											"    console.log(\"No token found in response\");",
+											"}",
+											"",
+											"// // set csrf token ",
+											"// const xsrfToken = pm.cookies.get(\"XSRF-TOKEN\");",
+											"// pm.collectionVariables.set(\"csrf_token\", xsrfToken);",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"data\": {\n    \"type\": \"users\",\n    \"attributes\": {\n      \"username\":\"pettigrew\",\n      \"password\": \"12345\"\n    }\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_gateway_url}}/petti/users/api/login",
+									"host": [
+										"{{api_gateway_url}}"
+									],
+									"path": [
+										"petti",
+										"users",
+										"api",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update-users",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"data\": {\n    \"type\": \"users\",\n    \"attributes\": {\n      \"firstName\": \"Name was updated\",\n      \"lastName\": \"Last Name\",\n      \"birthDate\": \"1993-09-14\",\n      \"email\": \"pettiville93@gmail.com\"\n    }\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_gateway_url}}/petti/users/:id",
+									"host": [
+										"{{api_gateway_url}}"
+									],
+									"path": [
+										"petti",
+										"users",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get all users",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api_gateway_url}}/petti/users?page=0&size=0",
+									"host": [
+										"{{api_gateway_url}}"
+									],
+									"path": [
+										"petti",
+										"users"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get single user",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api_gateway_url}}/petti/users/:id",
+									"host": [
+										"{{api_gateway_url}}"
+									],
+									"path": [
+										"petti",
+										"users",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "c0f53cd3-422b-47be-9c8c-553e1cf2e35f"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "invoice",
+					"item": [
+						{
+							"name": "create invoice",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"data\": {\n        \"type\": \"invoices\",\n        \"attributes\": {\n            \"userId\": \"08054770-5525-4519-94d8-c845deecff1c\",\n            \"paymentDue\": \"2024-03-15\",\n            \"description\": \"Invoice for services rendered\",\n            \"paymentTerms\": 30,\n            \"clientName\": \"Andrew Pettigrew\",\n            \"clientEmail\": \"pettigrewhere@gmail.com\",\n            \"status\": \"DRAFT\",\n            \"total\": 1250.50,\n            \"senderAddress\": {\n                \"street\": \"123 Main St\",\n                \"city\": \"Anytown\",\n                \"state\": \"CA\",\n                \"zip\": \"91234\"\n            },\n            \"clientAddress\": {\n                \"street\": \"456 Oak Ave\",\n                \"city\": \"Springfield\",\n                \"state\": \"IL\",\n                \"zip\": \"62704\"\n            }\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_gateway_url}}/petti/invoices/api",
+									"host": [
+										"{{api_gateway_url}}"
+									],
+									"path": [
+										"petti",
+										"invoices",
+										"api"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get all invoices",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "ap-correlation-id",
+										"value": "adfadfasfsfadas",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{api_gateway_url}}/petti/invoices/api?page=0&size=10",
+									"host": [
+										"{{api_gateway_url}}"
+									],
+									"path": [
+										"petti",
+										"invoices",
+										"api"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0",
+											"description": "Page number"
+										},
+										{
+											"key": "size",
+											"value": "10",
+											"description": "Number items on page."
+										},
+										{
+											"key": "status",
+											"value": "PENDING",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get single invoice",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api_gateway_url}}/petti/invoice/api/:id",
+									"host": [
+										"{{api_gateway_url}}"
+									],
+									"path": [
+										"petti",
+										"invoice",
+										"api",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get single invoice",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"data\": {\n        \"type\": \"invoices\",\n        \"attributes\": {\n            \"userId\": \"08054770-5525-4519-94d8-c845deecff1c\",\n            \"paymentDue\": \"2024-03-15\",\n            \"description\": \"dfghj description\",\n            \"paymentTerms\": 24,\n            \"clientName\": \"Acme Corporation\",\n            \"clientEmail\": \"info@acme.com\",\n            \"status\": \"DRAFT\",\n            \"total\": 1250.50,\n            \"senderAddress\": {\n                \"street\": \"123 Main St\",\n                \"city\": \"Anytown\",\n                \"state\": \"CA\",\n                \"zip\": \"91234\"\n            },\n            \"clientAddress\": {\n                \"street\": \"456 Oak Ave\",\n                \"city\": \"Springfield\",\n                \"state\": \"IL\",\n                \"zip\": \"62704\"\n            }\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_gateway_url}}/petti/invoice/api/:id",
+									"host": [
+										"{{api_gateway_url}}"
+									],
+									"path": [
+										"petti",
+										"invoice",
+										"api",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete-invoices",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{api_gateway_url}}/petti/invoice/api/:id",
+									"host": [
+										"{{api_gateway_url}}"
+									],
+									"path": [
+										"petti",
+										"invoice",
+										"api",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "contact-info",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_gateway_url}}/petti/invoice/api/contact-info",
+									"host": [
+										"{{api_gateway_url}}"
+									],
+									"path": [
+										"petti",
+										"invoice",
+										"api",
+										"contact-info"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "petti/invoices/api/contact-info",
 					"request": {
 						"method": "GET",
@@ -678,28 +1126,6 @@
 								"invoices",
 								"api",
 								"invoices",
-								"contact-info"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "petti/users/api/contact-info",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8072/petti/users/api/contact-info",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8072",
-							"path": [
-								"petti",
-								"users",
-								"api",
 								"contact-info"
 							]
 						}
@@ -853,12 +1279,12 @@
 								},
 								{
 									"key": "client_id",
-									"value": "apettigrew-invoice-ms",
+									"value": "{{client_id}}",
 									"type": "text"
 								},
 								{
 									"key": "client_secret",
-									"value": "xiG8kSIK3O4YqHOkYh2b3d7n8OSVixc8",
+									"value": "{{client_secret}}",
 									"type": "text"
 								},
 								{
@@ -915,7 +1341,7 @@
 								},
 								{
 									"key": "username",
-									"value": "andrew",
+									"value": "pettigrewio",
 									"type": "text"
 								},
 								{
@@ -926,7 +1352,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:7080/realms/development/protocol/openid-connect/token",
+							"raw": "http://localhost:7080/realms/master/protocol/openid-connect/token",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -934,7 +1360,7 @@
 							"port": "7080",
 							"path": [
 								"realms",
-								"development",
+								"master",
 								"protocol",
 								"openid-connect",
 								"token"
@@ -974,7 +1400,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:7080/realms/development/protocol/openid-connect/token",
+							"raw": "http://localhost:7080/realms/master/protocol/openid-connect/token",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -982,7 +1408,7 @@
 							"port": "7080",
 							"path": [
 								"realms",
-								"development",
+								"master",
 								"protocol",
 								"openid-connect",
 								"token"
@@ -1001,7 +1427,7 @@
 							"urlencoded": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhYTNVNXRIVjB3NEF1WmlXZ3Y0Tm5VM1JMaVFEYmR5S0Fqd3pYQVV6U1RZIn0.eyJleHAiOjE3NDEzMzE0MDUsImlhdCI6MTc0MTMzMTEwNSwianRpIjoiZjU4N2FlMDktMmFlOS00NjE4LTg1YTYtZWM0ODNlMmU0MTg0IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo3MDgwL3JlYWxtcy9kZXZlbG9wbWVudCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiJkMjc0ODM1My0zZWFhLTQyYmQtYjg4YS05MmRkNDgyYmZmYzkiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJwZXR0aS1pbnZvaWNlbWljcm9zZXJ2aWNlLWFwcCIsInNpZCI6ImNlZjRlM2JjLWVhZjMtNGMzZi1hMzRiLTdkYTRmYzAxMDdmYyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLWRldmVsb3BtZW50IiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJBbmRyZXcgUGV0dGlncmV3IiwicHJlZmVycmVkX3VzZXJuYW1lIjoiZGVtbyIsImdpdmVuX25hbWUiOiJBbmRyZXciLCJmYW1pbHlfbmFtZSI6IlBldHRpZ3JldyIsImVtYWlsIjoicGV0dGl2aWxsZTkzQGdtYWlsLmNvbSJ9.vEbiwQ7765dPXMzY5NR0XvxqN320B3WLWYzPOTq5P_m1o_yEXsroDzYKGvhgqByp0tFCX1VyTxpshLSRzoxR29L2CYhAcsFXgjfB-M83u1e5F3ozqXtv8Ow-goWUAdE3WH0Gi5FRbbIAXkEL6CxKCWGzv5-WaujKvU-ZEggKiiAFzu_wW1t43nJ6zkayNWtGqYyN7X5_M5R0HjXjXa3OSd08nWzW7ozyfmcbQejlGg7kkpr_-tSKKDSTyvh8pSTa87Taklebz1o_CbZVlKU6x-bLsScl3dgdXrKSRPXw-l753l8kZn3_2m1HuR98q3nRQ4d08dq2EhJFMx3OXlYhJQ",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJUaHB1TWplSjNBTnp1RU9Xbl9iaTRhN1JIX3NpRWNPQmxJRm5vU0pHclFnIn0.eyJleHAiOjE3NDI5MjM2MTAsImlhdCI6MTc0MjkyMzU1MCwianRpIjoiOGFjYjBjODUtMTNmZC00OTUzLWI0ZTctOGZmNzQyOGQ5Zjk2IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo3MDgwL3JlYWxtcy9tYXN0ZXIiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiYmRiNjVhMWItNDUyNS00ZTljLTkwNGItNTg1OTI3NDE3OTQ0IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiaW52b2ljZS1tcyIsInNpZCI6ImQ2YmU3YmM1LTIzOGItNDE5Yy04Y2IxLWQxY2I4OWEzZjBmYiIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1tYXN0ZXIiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiQW5kcmV3IFBldHRpZ3JldyIsInByZWZlcnJlZF91c2VybmFtZSI6ImFwZXR0aWdyZXciLCJnaXZlbl9uYW1lIjoiQW5kcmV3IiwiZmFtaWx5X25hbWUiOiJQZXR0aWdyZXciLCJlbWFpbCI6ImRldmRyZXcxMEBnbWFpbC5jb20ifQ.oOh2JH4-8K28lyM9F2egNJJ3sNclc67pn7XmCEGfIViO3rE-PsLO8CjkB7iG3iiB4xAmnV4K6XKff2nFSTVROwdB856lvtOPgPept0OeKzUEjXb_b3POHrk86pambfZsm5AbibVVYjOr3pktd37_nUtwr4Wc0uw_8eQ4EXy0J2qpGsRv6NtrwrLcpkjKVnpNU_gPkaEjJjXdHCQvOsHrw2urBLUavSXyB5sooI-0K_SPOMBSJVS93ggEZ6EGlRQsroNweTyJqENNHd4YyXpeBDxRy3EPf-RhITt95czdDjvtw6qv97--mc2GWy7nspp5PJQSJWrO_El1U9LfmZj0_g",
 									"type": "text"
 								},
 								{
@@ -1017,7 +1443,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:7080/realms/development/protocol/openid-connect/token/introspect",
+							"raw": "http://localhost:7080/realms/master/protocol/openid-connect/token/introspect",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1025,7 +1451,7 @@
 							"port": "7080",
 							"path": [
 								"realms",
-								"development",
+								"master",
 								"protocol",
 								"openid-connect",
 								"token",
@@ -1061,7 +1487,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:7080/realms/development/protocol/openid-connect/logout",
+							"raw": "http://localhost:7080/realms/master/protocol/openid-connect/logout",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1069,7 +1495,7 @@
 							"port": "7080",
 							"path": [
 								"realms",
-								"development",
+								"master",
 								"protocol",
 								"openid-connect",
 								"logout"
@@ -1206,6 +1632,15 @@
 			"key": "notification_url",
 			"value": "http://localhost:9010",
 			"type": "string"
+		},
+		{
+			"key": "api_gateway_url",
+			"value": "http://localhost:8072",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": ""
 		}
 	]
 }

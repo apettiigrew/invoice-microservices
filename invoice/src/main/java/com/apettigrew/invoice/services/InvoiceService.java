@@ -18,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @Transactional
 @AllArgsConstructor
@@ -38,7 +40,7 @@ public class InvoiceService {
             return invoiceRepository.findByStatus(status,pageable);
         }
 
-        return invoiceRepository.findAll(pageable);
+        return invoiceRepository.findAllActive(pageable);
     }
 
     public Invoice getInvoiceById(String id) {
@@ -91,6 +93,9 @@ public class InvoiceService {
     }
 
     public void deleteInvoice(String id) {
-        invoiceRepository.deleteById(id);
+        Invoice invoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Invoice not found"));
+        invoice.setDeletedAt(LocalDateTime.now());
+        invoiceRepository.save(invoice);
     }
 }

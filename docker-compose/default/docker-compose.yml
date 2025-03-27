@@ -300,7 +300,6 @@ services:
       file: common-config.yml
       service: microservice-eureka-config
 
-
   invoicedb:
     container_name: invoicedb
     ports:
@@ -309,18 +308,6 @@ services:
       MYSQL_DATABASE: invoicedb
     volumes:
       - invoicedb_data:/var/lib/mysql
-    extends:
-      file: common-config.yml
-      service: microservice-db-config
-
-  userdb:
-    container_name: userdb
-    ports:
-      - 3307:3306
-    environment:
-      MYSQL_DATABASE: userdb
-    volumes:
-      - userdb_data:/var/lib/mysql
     extends:
       file: common-config.yml
       service: microservice-db-config
@@ -366,8 +353,6 @@ services:
     ports:
       - "8081:8081"
     depends_on:
-      userdb:
-        condition: service_healthy
       configserver:
         condition: service_healthy
       eurekaserver:
@@ -380,17 +365,28 @@ services:
       start_period: 10s
     environment:
       OTEL_SERVICE_NAME: "users"
-      SPRING_DATASOURCE_URL: jdbc:mysql://userdb:3306/userdb
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-      SPRING_APPLICATION_NAME: users
-      # Flyway configurations
-      SPRING_FLYWAY_LOCATIONS: classpath:/db/migration
-      SPRING_FLYWAY_SQL-MIGRATION-SUFFIXES: .sql
-      SPRING_FLYWAY_URL: jdbc:mysql://userdb:3306/userdb
-      SPRING_FLYWAY_USER: root
-      SPRING_FLYWAY_PASSWORD: root
-      SPRING_FLYWAY_BASELINE-VERSION: 0.0
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+  notifications:
+    image: "pettiville/notification:v1"
+    container_name: notification-ms
+    ports:
+      - "8084:8081"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:8081/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    environment:
+      OTEL_SERVICE_NAME: "notifications"
     extends:
       file: common-config.yml
       service: microservice-eureka-config

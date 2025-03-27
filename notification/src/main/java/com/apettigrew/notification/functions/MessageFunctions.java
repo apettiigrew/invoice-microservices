@@ -15,7 +15,6 @@ import java.util.function.Function;
 @Configuration
 public class MessageFunctions {
     private static final Logger log = LoggerFactory.getLogger(MessageFunctions.class);
-
     private final EmailDispatcher emailDispatcher;
 
     @Bean

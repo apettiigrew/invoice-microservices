@@ -31,7 +31,6 @@ public class InvoiceApplication {
 		mapper.getConfiguration()
 				.setMatchingStrategy(MatchingStrategies.STRICT)
 				.setFieldMatchingEnabled(true);
-
 		return mapper;
 	}
 }

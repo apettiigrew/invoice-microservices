@@ -17,7 +17,6 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +32,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/api", produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
 public class InvoiceController {
-
     private static final Logger logger = LoggerFactory.getLogger(InvoiceController.class);
 
     private final InvoiceService invoiceService;
@@ -43,16 +41,11 @@ public class InvoiceController {
     }
 
     @Autowired
-    private Environment environment;
-
-    @Autowired
     private ContactInfoDto contactInfoDto;
-
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
     public SingleResourceResponse<InvoiceResource> createInvoice(final @Valid @RequestBody CreateRequest<InvoiceCreateRequest> requestData) {
-
         InvoiceDto invoiceDto = requestData.getData().generateDto();
         Invoice savedInvoice = invoiceService.createInvoice(invoiceDto);
 
@@ -89,7 +82,7 @@ public class InvoiceController {
 
     @PatchMapping("/{id}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public SingleResourceResponse<InvoiceResource> updateUser(final @PathVariable String id, @RequestBody @Validated UpdateRequest<InvoiceCreateRequest> requestData) {
+    public SingleResourceResponse<InvoiceResource> updateInvoice(final @PathVariable String id, @RequestBody @Validated UpdateRequest<InvoiceCreateRequest> requestData) {
         InvoiceDto invoiceDto = requestData.getData().generateDto();
 
         Invoice updatedInvoice = invoiceService.updateInvoice(id, invoiceDto);
@@ -98,7 +91,7 @@ public class InvoiceController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteUser(final @PathVariable String id) {
+    public ResponseEntity<Void> deleteInvoice(final @PathVariable String id) {
         try {
             invoiceService.deleteInvoice(id);
             return ResponseEntity.noContent().build();
