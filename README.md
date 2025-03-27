@@ -74,30 +74,21 @@ In this project we managed logs by utilizing Grafana Loki & Grafan Alloy. Grafan
 - Prometheus acts as our monitoring system that gives developers valuable insights into the health and performance of their software
 
 All these tools feed data into Grafana that allows us to visualize and analyze the data in a user-friendly way.
+**![observability-dashboard.png](docs/assets/observability-dashboard.png)**
 
 ### Event Driven Model
 We've added a publisher/subscriber model using RabbitMQ to distributes events to our notification service.  Our Notification service handles events via spring cloud function that subscribes to the message queue.
 
 ### Important endpoints
 
-[](https://github.com/sqshq/piggymetrics/blob/master/README.md#important-endpoints)
+| **Service**       | **URL**                                                         |
+|-------------------|-----------------------------------------------------------------|
+| **Config Server** | http://localhost:8071/                                          |
+| **Keycloak Server** | http://localhost:7080/                                          |
+| **Eureka Server** | http://localhost:8070/                                          |
+| **Grafana**       | http://localhost:3000/                                          |
+| **Prometheus**    | http://localhost:9090/targets                                   |
+| **Metrics**       | server_url/actuator/metrics <br> server_url/actuator/prometheus |
 
-#### Config Server Links
-Eg. 
-- http://localhost:8071/invoices/default
-- http://localhost:8071/invoices/qa
-- http://localhost:8071/invoices/prod
-
-#### Keycloak Server
-- http://localhost:7080/
-
-#### Eureka Server (Service Discovery)
-- http://localhost:8070/
-
-
-
-## Contributions are welcome!
-
-[](https://github.com/sqshq/piggymetrics/blob/master/README.md#contributions-are-welcome)
-
+### Contributions are welcome!
 Invoice Microservice system is open source, and would greatly appreciate your help. Feel free to suggest and implement any improvements.
