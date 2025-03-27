@@ -6,7 +6,7 @@ spring:
     name: "invoices"
   profiles:
     active:
-      - "prod"
+      - "default"
   datasource:
     url: jdbc:mysql://localhost:3306/invoicedb
     username: root
@@ -84,7 +84,7 @@ eureka:
 info:
   app:
     name: "invoices"
-    description: "Apettigrew Invoices Application"
+    description: "Invoices Application"
     version: "1.0.0"
 
 logging:

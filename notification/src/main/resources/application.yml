@@ -1,5 +1,5 @@
 server:
-  port: 9010
+  port: 8084
 
 spring:
   application:
@@ -19,6 +19,30 @@ spring:
           group: ${spring.application.name}
         email-out-0:
           destination: communication-sent
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
+  endpoint:
+    shutdown:
+      access: unrestricted
+    health:
+      probes:
+        enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
 eureka:
   instance:
     preferIpAddress: true
@@ -27,6 +51,20 @@ eureka:
     registerWithEureka: true
     serviceUrl:
       defaultZone: http://localhost:8070/eureka/
+
+info:
+  app:
+    name: "notifications"
+    description: "Notifications Application"
+    version: "1.0.0"
+
+logging:
+  level:
+    com:
+      apettigrew:
+        notification: DEBUG
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 
   rabbitmq:
     host: localhost

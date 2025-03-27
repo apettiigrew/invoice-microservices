@@ -7,6 +7,8 @@ services:
     environment:
       KEYCLOAK_ADMIN: "admin"
       KEYCLOAK_ADMIN_PASSWORD: "admin"
+    volumes:
+      - keycloak:/opt/keycloak/data/
     command: "start-dev"
     extends:
       file: common-config.yml
@@ -329,7 +331,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 10s
+      start_period: 20s
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://invoicedb:3306/invoicedb
       SPRING_DATASOURCE_USERNAME: root
@@ -362,7 +364,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 10s
+      start_period: 20s
     environment:
       OTEL_SERVICE_NAME: "users"
     extends:
@@ -373,18 +375,18 @@ services:
     image: "pettiville/notification:v1"
     container_name: notification-ms
     ports:
-      - "8084:8081"
+      - "8084:8084"
     depends_on:
       configserver:
         condition: service_healthy
       eurekaserver:
         condition: service_healthy
     healthcheck:
-      test: "curl --fail --silent localhost:8081/actuator/health/readiness | grep UP || exit 1"
+      test: "curl --fail --silent localhost:8084/actuator/health/readiness | grep UP || exit 1"
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 10s
+      start_period: 20s
     environment:
       OTEL_SERVICE_NAME: "notifications"
     extends:
@@ -395,7 +397,7 @@ networks:
   apettigrew:
     driver: "bridge"
 
-
 volumes:
   invoicedb_data:
   userdb_data:
+  keycloak:
