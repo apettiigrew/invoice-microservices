@@ -488,7 +488,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "E6INV8BIANEBVCR7i0I7fBVpFI879u8G",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "text"
@@ -904,7 +904,69 @@
 							"name": "create invoice",
 							"request": {
 								"auth": {
-									"type": "noauth"
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "client_authentication",
+											"value": "body",
+											"type": "string"
+										},
+										{
+											"key": "clientSecret",
+											"value": "RVISEsY2dtD1ylBggUVaQSvBh0B1ZGnf",
+											"type": "string"
+										},
+										{
+											"key": "clientId",
+											"value": "petti-auth-code-grant-type-flow",
+											"type": "string"
+										},
+										{
+											"key": "accessTokenUrl",
+											"value": "http://localhost:7080/realms/development/protocol/openid-connect/token",
+											"type": "string"
+										},
+										{
+											"key": "authUrl",
+											"value": "http://localhost:7080/realms/development/protocol/openid-connect/auth",
+											"type": "string"
+										},
+										{
+											"key": "tokenType",
+											"value": "Bearer",
+											"type": "string"
+										},
+										{
+											"key": "state",
+											"value": "ew34er-344fgfg-5gfgfg",
+											"type": "string"
+										},
+										{
+											"key": "tokenName",
+											"value": "authcode_accesstoken",
+											"type": "string"
+										},
+										{
+											"key": "useBrowser",
+											"value": true,
+											"type": "boolean"
+										},
+										{
+											"key": "grant_type",
+											"value": "authorization_code",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										},
+										{
+											"key": "scope",
+											"value": "openid email profile",
+											"type": "string"
+										}
+									]
 								},
 								"method": "POST",
 								"header": [],
@@ -947,7 +1009,69 @@
 							],
 							"request": {
 								"auth": {
-									"type": "noauth"
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "client_authentication",
+											"value": "body",
+											"type": "string"
+										},
+										{
+											"key": "clientSecret",
+											"value": "RVISEsY2dtD1ylBggUVaQSvBh0B1ZGnf",
+											"type": "string"
+										},
+										{
+											"key": "clientId",
+											"value": "petti-auth-code-grant-type-flow",
+											"type": "string"
+										},
+										{
+											"key": "accessTokenUrl",
+											"value": "http://localhost:7080/realms/development/protocol/openid-connect/token",
+											"type": "string"
+										},
+										{
+											"key": "authUrl",
+											"value": "http://localhost:7080/realms/development/protocol/openid-connect/auth",
+											"type": "string"
+										},
+										{
+											"key": "tokenType",
+											"value": "Bearer",
+											"type": "string"
+										},
+										{
+											"key": "state",
+											"value": "ew34er-344fgfg-5gfgfg",
+											"type": "string"
+										},
+										{
+											"key": "tokenName",
+											"value": "authcode_accesstoken",
+											"type": "string"
+										},
+										{
+											"key": "useBrowser",
+											"value": true,
+											"type": "boolean"
+										},
+										{
+											"key": "grant_type",
+											"value": "authorization_code",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										},
+										{
+											"key": "scope",
+											"value": "openid email profile",
+											"type": "string"
+										}
+									]
 								},
 								"method": "GET",
 								"header": [
@@ -958,7 +1082,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{api_gateway_url}}/petti/invoices/api?page=0&size=10",
+									"raw": "{{api_gateway_url}}/petti/invoices/api?status=PENDING&size=10&page=0",
 									"host": [
 										"{{api_gateway_url}}"
 									],
@@ -969,19 +1093,16 @@
 									],
 									"query": [
 										{
-											"key": "page",
-											"value": "0",
-											"description": "Page number"
+											"key": "status",
+											"value": "PENDING"
 										},
 										{
 											"key": "size",
-											"value": "10",
-											"description": "Number items on page."
+											"value": "10"
 										},
 										{
-											"key": "status",
-											"value": "PENDING",
-											"disabled": true
+											"key": "page",
+											"value": "0"
 										}
 									]
 								}
@@ -991,23 +1112,88 @@
 						{
 							"name": "get single invoice",
 							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "client_authentication",
+											"value": "body",
+											"type": "string"
+										},
+										{
+											"key": "clientSecret",
+											"value": "RVISEsY2dtD1ylBggUVaQSvBh0B1ZGnf",
+											"type": "string"
+										},
+										{
+											"key": "clientId",
+											"value": "petti-auth-code-grant-type-flow",
+											"type": "string"
+										},
+										{
+											"key": "accessTokenUrl",
+											"value": "http://localhost:7080/realms/development/protocol/openid-connect/token",
+											"type": "string"
+										},
+										{
+											"key": "authUrl",
+											"value": "http://localhost:7080/realms/development/protocol/openid-connect/auth",
+											"type": "string"
+										},
+										{
+											"key": "tokenType",
+											"value": "Bearer",
+											"type": "string"
+										},
+										{
+											"key": "state",
+											"value": "ew34er-344fgfg-5gfgfg",
+											"type": "string"
+										},
+										{
+											"key": "tokenName",
+											"value": "authcode_accesstoken",
+											"type": "string"
+										},
+										{
+											"key": "useBrowser",
+											"value": true,
+											"type": "boolean"
+										},
+										{
+											"key": "grant_type",
+											"value": "authorization_code",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										},
+										{
+											"key": "scope",
+											"value": "openid email profile",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{api_gateway_url}}/petti/invoice/api/:id",
+									"raw": "{{api_gateway_url}}/petti/invoices/api/:id",
 									"host": [
 										"{{api_gateway_url}}"
 									],
 									"path": [
 										"petti",
-										"invoice",
+										"invoices",
 										"api",
 										":id"
 									],
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "2"
 										}
 									]
 								}
@@ -1017,6 +1203,71 @@
 						{
 							"name": "get single invoice",
 							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "client_authentication",
+											"value": "body",
+											"type": "string"
+										},
+										{
+											"key": "clientSecret",
+											"value": "RVISEsY2dtD1ylBggUVaQSvBh0B1ZGnf",
+											"type": "string"
+										},
+										{
+											"key": "clientId",
+											"value": "petti-auth-code-grant-type-flow",
+											"type": "string"
+										},
+										{
+											"key": "accessTokenUrl",
+											"value": "http://localhost:7080/realms/development/protocol/openid-connect/token",
+											"type": "string"
+										},
+										{
+											"key": "authUrl",
+											"value": "http://localhost:7080/realms/development/protocol/openid-connect/auth",
+											"type": "string"
+										},
+										{
+											"key": "tokenType",
+											"value": "Bearer",
+											"type": "string"
+										},
+										{
+											"key": "state",
+											"value": "ew34er-344fgfg-5gfgfg",
+											"type": "string"
+										},
+										{
+											"key": "tokenName",
+											"value": "authcode_accesstoken",
+											"type": "string"
+										},
+										{
+											"key": "useBrowser",
+											"value": true,
+											"type": "boolean"
+										},
+										{
+											"key": "grant_type",
+											"value": "authorization_code",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										},
+										{
+											"key": "scope",
+											"value": "openid email profile",
+											"type": "string"
+										}
+									]
+								},
 								"method": "PATCH",
 								"header": [],
 								"body": {
@@ -1029,20 +1280,20 @@
 									}
 								},
 								"url": {
-									"raw": "{{api_gateway_url}}/petti/invoice/api/:id",
+									"raw": "{{api_gateway_url}}/petti/invoices/api/:id",
 									"host": [
 										"{{api_gateway_url}}"
 									],
 									"path": [
 										"petti",
-										"invoice",
+										"invoices",
 										"api",
 										":id"
 									],
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "2"
 										}
 									]
 								}
@@ -1052,23 +1303,88 @@
 						{
 							"name": "delete-invoices",
 							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "client_authentication",
+											"value": "body",
+											"type": "string"
+										},
+										{
+											"key": "clientSecret",
+											"value": "RVISEsY2dtD1ylBggUVaQSvBh0B1ZGnf",
+											"type": "string"
+										},
+										{
+											"key": "clientId",
+											"value": "petti-auth-code-grant-type-flow",
+											"type": "string"
+										},
+										{
+											"key": "accessTokenUrl",
+											"value": "http://localhost:7080/realms/development/protocol/openid-connect/token",
+											"type": "string"
+										},
+										{
+											"key": "authUrl",
+											"value": "http://localhost:7080/realms/development/protocol/openid-connect/auth",
+											"type": "string"
+										},
+										{
+											"key": "tokenType",
+											"value": "Bearer",
+											"type": "string"
+										},
+										{
+											"key": "state",
+											"value": "ew34er-344fgfg-5gfgfg",
+											"type": "string"
+										},
+										{
+											"key": "tokenName",
+											"value": "authcode_accesstoken",
+											"type": "string"
+										},
+										{
+											"key": "useBrowser",
+											"value": true,
+											"type": "boolean"
+										},
+										{
+											"key": "grant_type",
+											"value": "authorization_code",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										},
+										{
+											"key": "scope",
+											"value": "openid email profile",
+											"type": "string"
+										}
+									]
+								},
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{api_gateway_url}}/petti/invoice/api/:id",
+									"raw": "{{api_gateway_url}}/petti/invoices/api/:id",
 									"host": [
 										"{{api_gateway_url}}"
 									],
 									"path": [
 										"petti",
-										"invoice",
+										"invoices",
 										"api",
 										":id"
 									],
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "4"
 										}
 									]
 								}
@@ -1093,13 +1409,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{api_gateway_url}}/petti/invoice/api/contact-info",
+									"raw": "{{api_gateway_url}}/petti/invoices/api/contact-info",
 									"host": [
 										"{{api_gateway_url}}"
 									],
 									"path": [
 										"petti",
-										"invoice",
+										"invoices",
 										"api",
 										"contact-info"
 									]
