@@ -317,8 +317,8 @@ services:
   invoices:
     image: "pettiville/invoices:v1"
     container_name: invoices-ms
-    ports:
-      - "8080:8080"
+    #ports:
+    #  - "8080:8080"
     depends_on:
       invoicedb:
         condition: service_healthy
@@ -352,8 +352,8 @@ services:
   users:
     image: "pettiville/users:v1"
     container_name: users-ms
-    ports:
-      - "8081:8081"
+    #ports:
+    #  - "8081:8081"
     depends_on:
       configserver:
         condition: service_healthy
@@ -374,8 +374,8 @@ services:
   notifications:
     image: "pettiville/notification:v1"
     container_name: notification-ms
-    ports:
-      - "8084:8084"
+    #ports:
+    #  - "8084:8084"
     depends_on:
       configserver:
         condition: service_healthy
