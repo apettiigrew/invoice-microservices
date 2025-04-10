@@ -90,5 +90,13 @@ We've added a publisher/subscriber model using RabbitMQ to distributes events to
 | **Prometheus**    | http://localhost:9090/targets                                   |
 | **Metrics**       | server_url/actuator/metrics <br> server_url/actuator/prometheus |
 
+
+Kubernetes Dashboard
+Start dashboard run the following command:
+```kubectl -n kubernetes-dashboard port-forward svc/kubernetes-dashboard-kong-proxy 8443:443```
+https://localhost:8443/#/workloads?namespace=default
+
+
+
 ### Contributions are welcome!
 Invoice Microservice system is open source, and would greatly appreciate your help. Feel free to suggest and implement any improvements.
