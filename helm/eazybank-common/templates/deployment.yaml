@@ -79,11 +79,11 @@ spec:
           value: {{ .Values.appName }}
         {{- end }}
         {{- if .Values.rabbit_enabled }}
-        - name: SPRING_CLOUD_STREAM_RABBIT_BINDER_BROKERS
+        - name: SPRING_CLOUD_STREAM_RABBITMQ_BINDER_BROKERS
           valueFrom: 
             configMapKeyRef:
               name: {{ .Values.global.configMapName }}
-              key: SPRING_CLOUD_STREAM_RABBIT_BINDER_BROKERS
+              key: SPRING_CLOUD_STREAM_RABBITMQ_BINDER_BROKERS
         {{- end }}
         
 {{- end -}}

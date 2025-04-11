@@ -321,7 +321,7 @@ services:
       service: microservice-eureka-config
 
   notifications:
-    image: "pettiville/notification:v1"
+    image: "pettiville/notifications:v1"
     container_name: notification-ms
     #ports:
     #  - "8084:8084"

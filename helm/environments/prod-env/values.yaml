@@ -9,3 +9,4 @@ global:
   otelMetricsExporter: none
   otelLogsExporter: none
   kafkaBrokerURL: kafka-controller-0.kafka-controller-headless.default.svc.cluster.local:9092
+  rabbitBrokerURL: rabbitmq.default.svc.cluster.local:9092
