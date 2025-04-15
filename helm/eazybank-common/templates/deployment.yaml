@@ -79,11 +79,87 @@ spec:
           value: {{ .Values.appName }}
         {{- end }}
         {{- if .Values.rabbit_enabled }}
-        - name: SPRING_CLOUD_STREAM_RABBITMQ_BINDER_BROKERS
+        - name: SPRING_RABBITMQ_HOST
           valueFrom: 
             configMapKeyRef:
               name: {{ .Values.global.configMapName }}
-              key: SPRING_CLOUD_STREAM_RABBITMQ_BINDER_BROKERS
+              key: SPRING_RABBITMQ_HOST
         {{- end }}
-        
+        {{- if .Values.rabbit_enabled }}
+        - name: SPRING_RABBITMQ_PORT
+          valueFrom: 
+            configMapKeyRef:
+              name: {{ .Values.global.configMapName }}
+              key: SPRING_RABBITMQ_PORT
+        {{- end }}
+        {{- if .Values.rabbit_enabled }}
+        - name: SPRING_RABBITMQ_USERNAME
+          valueFrom: 
+            configMapKeyRef:
+              name: {{ .Values.global.configMapName }}
+              key: SPRING_RABBITMQ_USERNAME
+        {{- end }}
+        {{- if .Values.rabbit_enabled }}
+        - name: SPRING_RABBITMQ_PASSWORD
+          valueFrom: 
+            configMapKeyRef:
+              name: {{ .Values.global.configMapName }}
+              key: SPRING_RABBITMQ_PASSWORD
+        {{- end }}
+        {{- if .Values.keycloak_enabled }}
+        - name: KEYCLOAK_SERVERURL
+          valueFrom: 
+            configMapKeyRef:
+              name: {{ .Values.global.configMapName }}
+              key: KEYCLOAK_SERVERURL
+        {{- end }}
+        {{- if .Values.keycloak_enabled }}
+        - name: KEYCLOAK_REALM
+          valueFrom: 
+            configMapKeyRef:
+              name: {{ .Values.global.configMapName }}
+              key: KEYCLOAK_REALM
+        {{- end }}
+        {{- if .Values.keycloak_enabled }}
+        - name: KEYCLOAK_CLIENTID
+          valueFrom: 
+            configMapKeyRef:
+              name: {{ .Values.global.configMapName }}
+              key: KEYCLOAK_CLIENTID
+        {{- end }}
+        {{- if .Values.keycloak_enabled }}
+        - name: KEYCLOAK_USERNAME
+          valueFrom: 
+            configMapKeyRef:
+              name: {{ .Values.global.configMapName }}
+              key: KEYCLOAK_USERNAME
+        {{- end }}
+        {{- if .Values.keycloak_enabled }}
+        - name: KEYCLOAK_PASSWORD
+          valueFrom: 
+            configMapKeyRef:
+              name: {{ .Values.global.configMapName }}
+              key: KEYCLOAK_PASSWORD
+        {{- end }}
+        {{- if .Values.keycloak_enabled }}
+        - name: KEYCLOAK_AUTHSERVERURL
+          valueFrom: 
+            configMapKeyRef:
+              name: {{ .Values.global.configMapName }}
+              key: KEYCLOAK_AUTHSERVERURL
+        {{- end }}
+        {{- if .Values.keycloak_enabled }}
+        - name: KEYCLOAK_APPCLIENTID
+          valueFrom: 
+            configMapKeyRef:
+              name: {{ .Values.global.configMapName }}
+              key: KEYCLOAK_APPCLIENTID
+        {{- end }}
+        {{- if .Values.keycloak_enabled }}
+        - name: KEYCLOAK_APPCLIENTSECRET
+          valueFrom: 
+            configMapKeyRef:
+              name: {{ .Values.global.configMapName }}
+              key: KEYCLOAK_APPCLIENTSECRET
+        {{- end }}
 {{- end -}}

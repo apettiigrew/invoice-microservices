@@ -9,4 +9,16 @@ global:
   otelMetricsExporter: none
   otelLogsExporter: none
   kafkaBrokerURL: kafka-controller-0.kafka-controller-headless.default.svc.cluster.local:9092
-  rabbitBrokerURL: rabbitmq.default.svc.cluster.local:9092
+  rabbitBrokerURL: rabbit-rabbitmq.default.svc.cluster.local
+  rabbitBrokerPort: 5672
+  rabbitBrokerUsername: user
+  rabbitBrokerPassword: password
+  keyCloakServerURL: http://keycloak.default.svc.cluster.local:80
+  keyCloakAuthServerURL: http://keycloak.default.svc.cluster.local:80/auth
+  keyCloakRealm: master
+  keyCloakClientId: admin-cli
+  keyCloakAppClientId: invoice-ms
+  keyCloakAppClientSecret: Jgt0Y8XZ7lJV55CZBrATHvyTNfV29AbF
+  keyCloakUserName: user
+  keyCloakPassword: password
+  

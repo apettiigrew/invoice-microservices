@@ -26,3 +26,4 @@ eureka_enabled: true
 resourceserver_enabled: false
 otel_enabled: true
 rabbit_enabled: true
+keycloak_enabled: false

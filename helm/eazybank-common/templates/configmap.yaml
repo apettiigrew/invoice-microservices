@@ -13,5 +13,17 @@ data:
   OTEL_METRICS_EXPORTER: {{ .Values.global.otelMetricsExporter }}
   OTEL_LOGS_EXPORTER: {{ .Values.global.otelLogsExporter }}
   SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: {{ .Values.global.kafkaBrokerURL }}
-  SPRING_CLOUD_STREAM_RABBITMQ_BINDER_BROKERS: {{ .Values.global.rabbitBrokerURL }}
+  SPRING_RABBITMQ_HOST: {{ .Values.global.rabbitBrokerURL }}
+  SPRING_RABBITMQ_PORT: "{{ .Values.global.rabbitBrokerPort }}"
+  SPRING_RABBITMQ_USERNAME: {{ .Values.global.rabbitBrokerUsername }}
+  SPRING_RABBITMQ_PASSWORD: {{ .Values.global.rabbitBrokerPassword }}
+  KEYCLOAK_SERVERURL: {{ .Values.global.keyCloakServerURL }}
+  KEYCLOAK_AUTHSERVERURL: {{ .Values.global.keyCloakAuthServerURL }}
+  KEYCLOAK_REALM: {{ .Values.global.keyCloakRealm }}
+  KEYCLOAK_CLIENTID: {{ .Values.global.keyCloakClientId }}
+  KEYCLOAK_APPCLIENTID: {{ .Values.global.keyCloakAppClientId }}
+  KEYCLOAK_APPCLIENTSECRET: {{ .Values.global.keyCloakAppClientSecret }}
+  KEYCLOAK_USERNAME: {{ .Values.global.keyCloakUserName }}
+  KEYCLOAK_PASSWORD: {{ .Values.global.keyCloakPassword }}
+  
 {{- end -}}

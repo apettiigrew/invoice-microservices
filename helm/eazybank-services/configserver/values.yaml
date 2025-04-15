@@ -25,4 +25,5 @@ config_enabled: false
 eureka_enabled: false
 resouceserver_enabled: false
 otel_enabled: true
-rabbit_enabled: false
+rabbit_enabled: true
+keycloak_enabled: false
