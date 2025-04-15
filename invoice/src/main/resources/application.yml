@@ -20,6 +20,8 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  flyway:
+    enabled: false
   config:
     import: "optional:configserver:http://localhost:8071/"
   cloud:
