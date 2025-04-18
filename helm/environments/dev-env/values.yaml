@@ -3,7 +3,7 @@ global:
   activeProfile: default
   configServerURL: configserver:http://configserver:8071/
   eurekaServerURL: http://eurekaserver:8070/eureka/
-  keyCloakURL: http://keycloak.default.svc.cluster.local:80/realms/master/protocol/openid-connect/certs
+  keyCloakURL: http://keycloak/realms/master/protocol/openid-connect/certs
   openTelemetryJavaAgent: "-javaagent:/app/libs/opentelemetry-javaagent-2.11.0.jar"
   otelExporterEndPoint: http://tempo-grafana-tempo-distributor:4318
   otelMetricsExporter: none
@@ -18,7 +18,7 @@ global:
   keyCloakRealm: master
   keyCloakClientId: admin-cli
   keyCloakAppClientId: invoice-ms
-  keyCloakAppClientSecret: Jgt0Y8XZ7lJV55CZBrATHvyTNfV29AbF
+  keyCloakAppClientSecret: 7NC390Gi58NzMu0pnS6U9kBF3URTeu37
   keyCloakUserName: user
   keyCloakPassword: password
   
