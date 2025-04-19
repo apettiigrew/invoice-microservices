@@ -8,31 +8,17 @@ spring:
     active:
       - "default"
   datasource:
-    url: jdbc:mysql://localhost:3306/invoicedb
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  flyway:
-    locations: /db/migration
-    sql-migration-suffixes: .sql
-    url: jdbc:mysql://localhost:3306/invoicedb
-    user: root
-    password: root
-    baseline-version: 0.0
-    enabled: true
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
   h2:
     console:
       enabled: true
   jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: none
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    open-in-view: false
-    properties:
-      hibernate:
-        type.preferred_uuid_jdbc_type: VARCHAR
-        format_sql: true
+      ddl-auto: update
     show-sql: true
   config:
     import: "optional:configserver:http://localhost:8071/"

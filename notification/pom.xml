@@ -9,7 +9,7 @@
 		<relativePath/>
 	</parent>
 	<groupId>com.apettigrew</groupId>
-	<artifactId>notification</artifactId>
+	<artifactId>notifications</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Notification Service</name>
 	<description>Microservice for notification</description>

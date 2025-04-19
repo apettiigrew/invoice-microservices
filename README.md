@@ -1,7 +1,9 @@
 
 # Invoice Microservices App
 
-The Invoice microservice app is a simple invoice management app built to demonstrate the Microservices Architecture Pattern using SpringBoot, Spring Cloud and Docker. The project is intended as a pure learning process to try out various concepts in a microservices and distributed environment. You are free to fork it and turn into something else or even provide cool updates via pull request. I'm happy to collab.
+The Invoice microservice app is a simple invoice management app built to demonstrate the Microservices Architecture Pattern using SpringBoot, 
+Spring Cloud, Docker and Kubernetes. The project is intended as a pure learning process to try out various concepts in a microservices and distributed environment. 
+You are free to fork it and turn into something else or even provide cool updates via pull request. I'm happy to collab.
 
 ## Functional services
 
@@ -89,6 +91,11 @@ We've added a publisher/subscriber model using RabbitMQ to distributes events to
 | **Grafana**       | http://localhost:3000/                                          |
 | **Prometheus**    | http://localhost:9090/targets                                   |
 | **Metrics**       | server_url/actuator/metrics <br> server_url/actuator/prometheus |
+
+
+### Kubernetes + Helm
+There are also helm charts created for each service in the ecosystem. 
+The charts are located in the `helm` directory. 
 
 ### Contributions are welcome!
 Invoice Microservice system is open source, and would greatly appreciate your help. Feel free to suggest and implement any improvements.
