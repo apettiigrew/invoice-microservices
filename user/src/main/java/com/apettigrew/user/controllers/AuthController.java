@@ -30,4 +30,16 @@ public class AuthController {
         KeycloakTokenDto token = userService.login(username, password);
         return new ResponseEntity<>(token,HttpStatus.OK);
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestParam String refreshToken) {
+        try {
+            String result = userService.logout(refreshToken);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Logout failed: " + e.getMessage());
+        }
+    }
 }
+

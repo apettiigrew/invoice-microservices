@@ -13,6 +13,11 @@ import java.util.stream.Collectors;
 
 public class KeycloakRoleConverter  implements Converter<Jwt, Collection<GrantedAuthority>> {
 
+    /**
+     * Function used to extract the keycloak roles in a format
+     * @param source
+     * @return
+     */
     @Override
     public Collection<GrantedAuthority> convert(Jwt source) {
         Map<String, Object> realmAccess = (Map<String, Object>) source.getClaims().get("realm_access");

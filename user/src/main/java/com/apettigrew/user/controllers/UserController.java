@@ -55,6 +55,7 @@ public class UserController {
     @ResponseStatus(code = HttpStatus.CREATED)
     public SingleResourceResponse<UserResource> createUser(final @RequestBody @Validated CreateRequest<UserCreateRequest> requestData) {
         UserRegisterDto registerUserDto = requestData.getData().generateDto();
+        System.out.println("Started");
         final var user = userService.createUser(registerUserDto);
 
         return new SingleResourceResponse<>(UserResource.toResource(user));

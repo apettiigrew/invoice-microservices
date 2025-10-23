@@ -25,12 +25,11 @@ public class SecurityConfig {
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity serverHttpSecurity) {
         serverHttpSecurity.authorizeExchange(exchanges ->
                         exchanges.pathMatchers(HttpMethod.POST, "petti/users/**").permitAll()
-                                .pathMatchers("/petti/users/**").authenticated()
                                 .pathMatchers("/petti/invoices/**").authenticated()
                                 .anyExchange().permitAll())
 
-                .oauth2ResourceServer(oAuth2ResourceServerSpec -> oAuth2ResourceServerSpec
-                        .jwt(jwtSpec -> jwtSpec.jwtAuthenticationConverter(grantedAuthoritiesExtractor())));
+                .oauth2ResourceServer(oAuth2ResourceServerSpec -> oAuth2ResourceServerSpec.jwt(jwtSpec -> jwtSpec.jwtAuthenticationConverter(grantedAuthoritiesExtractor())));
+
         serverHttpSecurity.csrf(csrfSpec -> csrfSpec.disable());
 
         return serverHttpSecurity.build();

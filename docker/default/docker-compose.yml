@@ -301,8 +301,6 @@ services:
   users:
     image: "pettiville/users:v1"
     container_name: users-ms
-    #ports:
-    #  - "8081:8081"
     depends_on:
       configserver:
         condition: service_healthy

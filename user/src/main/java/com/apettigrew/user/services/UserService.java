@@ -6,9 +6,9 @@ import com.apettigrew.user.dtos.UserDto;
 import com.apettigrew.user.dtos.UserRegisterDto;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.modelmapper.ModelMapper;
@@ -44,7 +44,7 @@ public class UserService {
         String tokenUrl = keycloakConfigProperties.getServerUrl() + "/realms/" + keycloakConfigProperties.getRealm() + "/protocol/openid-connect/token";
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("grant_type", "password");
+        map.add("grant_type", OAuth2Constants.PASSWORD);
         map.add("client_id", keycloakConfigProperties.getAppClientId());
         map.add("client_secret", keycloakConfigProperties.getAppClientSecret());
         map.add("username", username);
@@ -100,8 +100,8 @@ public class UserService {
 
         try  {
             Response response = keycloak.realm(keycloakConfigProperties.getRealm()).users().create(userRep);
-            String userId = CreatedResponseUtil.getCreatedId(response);
-            UserResource userResource = keycloak.realm(keycloakConfigProperties.getRealm()).users().get(userId);
+            CreatedResponseUtil.getCreatedId(response);
+            // User created successfully
         } catch(Exception e){
             logger.error(e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -126,5 +126,29 @@ public class UserService {
         }
 
         return modelMapper.map(userRep, UserDto.class);
+    }
+
+    public String logout(String refreshToken) {
+        String revokeUrl = keycloakConfigProperties.getServerUrl() + "/realms/" + keycloakConfigProperties.getRealm() + "/protocol/openid-connect/revoke";
+
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("client_id", keycloakConfigProperties.getAppClientId());
+        map.add("client_secret", keycloakConfigProperties.getAppClientSecret());
+        map.add("token", refreshToken);
+        map.add("token_type_hint", "refresh_token");
+
+        try {
+            restClient.post()
+                .uri(revokeUrl)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(map)
+                .retrieve()
+                .toEntity(String.class);
+
+            return "User logged out successfully.";
+        } catch (Exception e) {
+            logger.error("Logout failed: {}", e.getMessage());
+            throw new RuntimeException("Logout failed: " + e.getMessage());
+        }
     }
 }
