@@ -18,7 +18,7 @@ global:
   keyCloakRealm: master
   keyCloakClientId: admin-cli
   keyCloakAppClientId: invoice-ms
-  keyCloakAppClientSecret: QMSsObPFBynnfzPfFAYD5cX6HGwlUUiD
+  keyCloakAppClientSecret:
   keyCloakUserName: user
   keyCloakPassword: password
   

@@ -5,6 +5,9 @@ The Invoice microservice app is a simple invoice management app built to demonst
 Spring Cloud, Docker and Kubernetes. The project is intended as a pure learning process to try out various concepts in a microservices and distributed environment. 
 You are free to fork it and turn into something else or even provide cool updates via pull request. I'm happy to collab.
 
+## Tutorial overview
+https://code2tutorial.com/tutorial/66218165-f888-4dc1-bd18-ed3466c91ee9/index.md
+
 ## Functional services
 
 The Invoice System is composed into three core microservices. Each application is independently deployable and structured around specific business domains.
