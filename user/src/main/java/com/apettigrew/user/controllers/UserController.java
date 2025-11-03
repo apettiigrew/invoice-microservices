@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/api", produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
+@RequestMapping(produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
 @Validated
 public class UserController {
     @Autowired

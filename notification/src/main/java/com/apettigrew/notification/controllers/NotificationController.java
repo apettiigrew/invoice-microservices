@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api", produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
+@RequestMapping(produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
 @AllArgsConstructor
 @Validated
 public class NotificationController {

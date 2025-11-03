@@ -13,7 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/api", produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
+@RequestMapping(produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
 @Validated
 public class AuthController {
 

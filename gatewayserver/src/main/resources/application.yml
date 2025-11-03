@@ -7,8 +7,8 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: false #allows gateway server to connect with eureka server to get all the details about the microservices
-          lowerCaseServiceId: true
+          enabled: true #allows gateway server to connect with eureka server to get all the details about the microservices
+          lowerCaseServiceId: true # allow the service name to be accepted in lowercase
   security:
     oauth2:
       resourceserver:

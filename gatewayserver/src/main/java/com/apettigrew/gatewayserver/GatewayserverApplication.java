@@ -16,15 +16,15 @@ public class GatewayserverApplication {
 	}
 
 	@Bean
-	public RouteLocator msBankRouteConfig(RouteLocatorBuilder routeLocatorBuilder) {
+	public RouteLocator customRouteLocator(RouteLocatorBuilder routeLocatorBuilder) {
 		return routeLocatorBuilder.routes()
 				.route(p -> p
-					.path("/petti/invoices/**")
+					.path("/api/v1/invoices/**")
 					.filters( f -> f.rewritePath("/petti/invoices/(?<segment>.*)","/${segment}")
 							.addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
 					.uri("lb://INVOICES"))
 				.route(p -> p
-					.path("/petti/users/**")
+					.path("/api/v1/users/**")
 					.filters( f -> f.rewritePath("/petti/users/(?<segment>.*)","/${segment}")
 							.addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
 					.uri("lb://USERS")).build();

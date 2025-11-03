@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/api", produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
+@RequestMapping(produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
 public class InvoiceController {
     private static final Logger logger = LoggerFactory.getLogger(InvoiceController.class);
 
