@@ -247,3 +247,5 @@ Session.vim
 **/charts/*.tgz
 
 .history
+
+docker/default/.data/

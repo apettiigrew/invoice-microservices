@@ -2,8 +2,49 @@
 # Invoice Microservices App
 
 The Invoice microservice app is a simple invoice management app built to demonstrate the Microservices Architecture Pattern using SpringBoot, 
-Spring Cloud, Docker and Kubernetes. The project is intended as a pure learning process to try out various concepts in a microservices and distributed environment. 
+Spring Cloud, Docker and Kubernetes. 
+
+## 📝 Project Brief 
+The Invoice Management System is a full-stack web application that enables users to efficiently create, read, update, and delete invoices while maintaining clear visibility into payment statuses. 
+It’s designed with a focus on, microservices patterns, data validation, and state management best practices reflecting real-world billing workflows used by freelancers and small businesses.
+
+## 🎯 Purpose
+The project is intended as a pure learning process to try out various concepts in a microservices and distributed environment.
 You are free to fork it and turn into something else or even provide cool updates via pull request. I'm happy to collab.
+
+## Core Features
+1. CRUD Functionality 
+- Create new invoices through an intuitive form. 
+- Read and display invoices in a structured dashboard. 
+- Update invoices to adjust client info, payment terms, or amounts. 
+- Delete invoices permanently with confirmation prompts.
+
+🧾 2. Form Validation & Data Integrity
+- Built-in form validation ensures that all required fields (e.g., client name, due date, items, total) are filled before submission. 
+- Inline error messages guide the user to fix invalid inputs. 
+- Prevents malformed or incomplete invoices from being submitted.
+
+💾 3. Drafts & Payment Status Management
+- Users can save invoices as drafts when details are incomplete. 
+- Mark invoices as paid when payment is received. 
+- Automatically transitions between Draft, Pending, and Paid states.
+
+🔍 4. Filtering by Status
+- Dynamic filtering allows users to view invoices by status:
+  - 📝 Draft 
+  - ⏳ Pending 
+  - ✅ Paid
+
+
+## Tech Stack
+- Backend: Java (Spring Boot / Spring Cloud ecosystem)
+- Configuration: Spring Cloud Config & Spring Cloud Bus
+- Service Discovery: Netflix Eureka
+- API Gateway: Spring Cloud Gateway
+- Messaging Queues: Spring Cloud Stream
+- Observability & Monitoring: Prometheus, Grafana, Loki, Alloy
+- Containerization/Orchestration: Docker, Kubernetes + Helm charts
+- Version Control: Git & GitHub
 
 ## Tutorial overview
 https://code2tutorial.com/tutorial/66218165-f888-4dc1-bd18-ed3466c91ee9/index.md

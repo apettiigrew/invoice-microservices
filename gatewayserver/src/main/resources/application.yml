@@ -7,7 +7,7 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: false
+          enabled: false #allows gateway server to connect with eureka server to get all the details about the microservices
           lowerCaseServiceId: true
   security:
     oauth2:

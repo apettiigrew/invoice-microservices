@@ -1,5 +1,5 @@
 server:
-  port: 8071
+  port: 8071 #The port the app will run on
 
 spring:
   application:
