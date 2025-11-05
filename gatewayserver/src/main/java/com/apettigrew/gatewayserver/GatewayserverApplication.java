@@ -5,7 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @SpringBootApplication
@@ -22,7 +24,11 @@ public class GatewayserverApplication {
 					.path("/api/v1/invoices/**")
 					.filters( f -> f.rewritePath("/petti/invoices/(?<segment>.*)","/${segment}")
 							.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
-							.circuitBreaker(config->config.setName("invoicesCircuitBreaker")))
+							.circuitBreaker(config->config.setName("invoicesCircuitBreaker"))
+							.retry((retryConfig ->
+									retryConfig.setRetries(2)
+									.setMethods(HttpMethod.GET)
+											.setBackoff(Duration.ofMillis(100),Duration.ofMillis(1000),2,true))))
 
 					.uri("lb://INVOICES"))
 				.route(p -> p
