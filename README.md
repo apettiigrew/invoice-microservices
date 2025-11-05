@@ -1,5 +1,6 @@
 
-# Invoice Microservices App
+# SaaS Invoice Microservices App with SpringBoot, Docker, Kubernetes
+
 
 The Invoice microservice app is a simple invoice management app built to demonstrate the Microservices Architecture Pattern using SpringBoot, 
 Spring Cloud, Docker and Kubernetes. 
@@ -137,14 +138,75 @@ We've added a publisher/subscriber model using RabbitMQ to distributes events to
 | **Metrics**       | server_url/actuator/metrics <br> server_url/actuator/prometheus |
 
 ### Resilience Patterns
+This project uses Resilience4j is a lightweight fault tolerance library designed for functional programming. Resilience4j provides higher-order functions (decorators) to enhance any functional interface, lambda expression or method reference with a Circuit Breaker, Rate Limiter, Retry or Bulkhead.
 
+https://resilience4j.readme.io/docs/getting-started
 #### Circuit breaker
-....
+The circuit breaker is added in apigateway server. The Circuit Breaker pattern prevents system failures from \
+cascading when calling remote services. It monitors failures and, if a service fails repeatedly, it “trips” to fail fast and protect the system. Once the service recovers, calls are allowed again.
+```
+.route(p -> p
+    .path("/api/v1/invoices/**")
+    .filters(f -> f
+        .rewritePath("/petti/invoices/(?<segment>.*)", "/${segment}")
+        .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+        .circuitBreaker(config -> 
+            config.setName("invoicesCircuitBreaker"))
+    )
+    .uri("lb://INVOICES")
+)
+```
 #### Retry
-....
-#### Rate Limiting
-....
 
+Retry logic automatically retries failed operations, typically for transient errors like network timeouts, to improve reliability and ensure successful execution without manual intervention.
+
+```
+.route(p -> p
+    .path("/api/v1/invoices/**")
+    .filters( f -> f.rewritePath("/petti/invoices/(?<segment>.*)","/${segment}")
+            .retry((retryConfig ->
+                    retryConfig.setRetries(2)
+                    .setMethods(HttpMethod.GET)
+                            .setBackoff(Duration.ofMillis(100),Duration.ofMillis(1000),2,true))))
+
+    .uri("lb://INVOICES"))
+```
+#### Rate Limiting
+Rate limiting controls how many requests a user or client can make to a service in a given time period. It prevents abuse, ensures fair usage, and protects system resources.
+```
+@Bean
+	public RouteLocator customRouteLocator(RouteLocatorBuilder routeLocatorBuilder) {
+		return routeLocatorBuilder.routes()
+          .route(p -> p
+            .path("/api/v1/invoices/**")
+            .filters( f -> f.rewritePath("/petti/invoices/(?<segment>.*)","/${segment}")
+              .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+              .circuitBreaker(config->config.setName("invoicesCircuitBreaker"))
+              .retry((retryConfig ->
+                      retryConfig.setRetries(2)
+                      .setMethods(HttpMethod.GET)
+                              .setBackoff(Duration.ofMillis(100),Duration.ofMillis(1000),2,true))))
+            .uri("lb://INVOICES"))
+        .route(p -> p
+            .path("/api/v1/users/**")
+            .filters( f -> f.rewritePath("/petti/users/(?<segment>.*)","/${segment}")
+              .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+              .requestRateLimiter(config ->
+                config.setRateLimiter(redisRateLimiter())
+                  .setKeyResolver(keyResolver())))
+            .uri("lb://USERS")).build();
+	}
+	
+@Bean
+public RedisRateLimiter redisRateLimiter(){
+    return new RedisRateLimiter(5,5,1);
+}
+
+@Bean
+public KeyResolver keyResolver(){
+    return exchange -> Mono.justOrEmpty(Objects.requireNonNull(exchange.getRequest().getRemoteAddress()).getAddress().getHostAddress());
+}
+```
 
 ### Kubernetes + Helm
 There are also helm charts created for each service in the ecosystem. 
