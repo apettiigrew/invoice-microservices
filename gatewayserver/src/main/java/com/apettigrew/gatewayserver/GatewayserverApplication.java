@@ -2,13 +2,17 @@ package com.apettigrew.gatewayserver;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
+import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @SpringBootApplication
 public class GatewayserverApplication {
@@ -34,7 +38,21 @@ public class GatewayserverApplication {
 				.route(p -> p
 					.path("/api/v1/users/**")
 					.filters( f -> f.rewritePath("/petti/users/(?<segment>.*)","/${segment}")
-							.addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
+							.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+							.requestRateLimiter(config ->
+									config.setRateLimiter(redisRateLimiter())
+											.setKeyResolver(keyResolver())))
 					.uri("lb://USERS")).build();
+	}
+
+
+	@Bean
+	public RedisRateLimiter redisRateLimiter(){
+		return new RedisRateLimiter(1,1,1);
+	}
+
+	@Bean
+	public KeyResolver keyResolver(){
+		return exchange -> Mono.justOrEmpty(Objects.requireNonNull(exchange.getRequest().getRemoteAddress()).getAddress().getHostAddress());
 	}
 }

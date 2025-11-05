@@ -53,6 +53,7 @@ services:
       apettigrew:
         aliases:
           - loki
+
   write:
     image: grafana/loki:3.1.2
     command: "-config.file=/etc/loki/config.yaml -target=write"
@@ -71,6 +72,7 @@ services:
       - minio
     networks:
       <<: *loki-dns
+
   alloy:
     image: grafana/alloy:v1.5.1
     volumes:
