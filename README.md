@@ -136,6 +136,15 @@ We've added a publisher/subscriber model using RabbitMQ to distributes events to
 | **Prometheus**    | http://localhost:9090/targets                                   |
 | **Metrics**       | server_url/actuator/metrics <br> server_url/actuator/prometheus |
 
+### Resilience Patterns
+
+#### Circuit breaker
+....
+#### Retry
+....
+#### Rate Limiting
+....
+
 
 ### Kubernetes + Helm
 There are also helm charts created for each service in the ecosystem. 
