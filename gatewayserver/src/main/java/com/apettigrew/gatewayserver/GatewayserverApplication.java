@@ -21,7 +21,9 @@ public class GatewayserverApplication {
 				.route(p -> p
 					.path("/api/v1/invoices/**")
 					.filters( f -> f.rewritePath("/petti/invoices/(?<segment>.*)","/${segment}")
-							.addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
+							.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+							.circuitBreaker(config->config.setName("invoicesCircuitBreaker")))
+
 					.uri("lb://INVOICES"))
 				.route(p -> p
 					.path("/api/v1/users/**")
