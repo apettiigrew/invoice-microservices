@@ -121,6 +121,15 @@ In this project we managed logs by utilizing Grafana Loki & Grafan Alloy. Grafan
 - Prometheus acts as our monitoring system that gives developers valuable insights into the health and performance of their software
 
 All these tools feed data into Grafana that allows us to visualize and analyze the data in a user-friendly way.
+
+
+### Logging with Loki+Alloy
+...
+### Metrics with Prometheus
+...
+### Traces with Tempo
+...
+
 **![observability-dashboard.png](docs/assets/observability-dashboard.png)**
 
 ### Event Driven Model

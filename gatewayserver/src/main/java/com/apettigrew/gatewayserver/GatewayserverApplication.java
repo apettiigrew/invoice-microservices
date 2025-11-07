@@ -26,7 +26,7 @@ public class GatewayserverApplication {
 		return routeLocatorBuilder.routes()
 				.route(p -> p
 					.path("/api/v1/invoices/**")
-					.filters( f -> f.rewritePath("/petti/invoices/(?<segment>.*)","/${segment}")
+					.filters( f -> f.rewritePath("/api/v1/invoices/(?<segment>.*)","/${segment}")
 							.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
 							.circuitBreaker(config->config.setName("invoicesCircuitBreaker"))
 							.retry((retryConfig ->
@@ -37,7 +37,7 @@ public class GatewayserverApplication {
 					.uri("lb://INVOICES"))
 				.route(p -> p
 					.path("/api/v1/users/**")
-					.filters( f -> f.rewritePath("/petti/users/(?<segment>.*)","/${segment}")
+					.filters( f -> f.rewritePath("/api/v1/users/(?<segment>.*)","/${segment}")
 							.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
 							.requestRateLimiter(config ->
 									config.setRateLimiter(redisRateLimiter())
