@@ -1,11 +1,15 @@
 package com.apettigrew.user.controllers;
 
+import com.apettigrew.user.dtos.ForgotPasswordDto;
 import com.apettigrew.user.dtos.KeycloakTokenDto;
+import com.apettigrew.user.dtos.ResetPasswordDto;
 import com.apettigrew.user.dtos.UserLoginDto;
 import com.apettigrew.user.dtos.UserRegisterDto;
 import com.apettigrew.user.jsonapi.JsonApiConstants;
 import com.apettigrew.user.jsonapi.SingleResourceResponse;
 import com.apettigrew.user.jsonapi.requests.CreateRequest;
+import com.apettigrew.user.jsonapi.requests.ForgotPasswordRequest;
+import com.apettigrew.user.jsonapi.requests.ResetPasswordRequest;
 import com.apettigrew.user.jsonapi.requests.UserCreateRequest;
 import com.apettigrew.user.jsonapi.requests.UserLoginRequest;
 import com.apettigrew.user.jsonapi.resources.UserResource;
@@ -57,6 +61,35 @@ public class AuthController {
     public ResponseEntity<KeycloakTokenDto> refreshToken(@RequestParam("refresh_token") String refreshToken) {
         KeycloakTokenDto token = userService.refreshToken(refreshToken);
         return new ResponseEntity<>(token, HttpStatus.OK);
+    }
+
+    @PostMapping("/forgot-password")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseEntity<Map<String, String>> forgotPassword(
+            final @RequestBody @Validated CreateRequest<ForgotPasswordRequest> request) {
+        ForgotPasswordDto forgotPasswordDto = request.getData().generateDto();
+        String email = forgotPasswordDto.getEmail();
+
+        userService.forgotPassword(email);
+
+        // Return a generic success message (don't reveal if email exists for security)
+        return ResponseEntity.ok(Map.of(
+                "message", "If an account with that email exists, a password reset link has been sent."
+        ));
+    }
+
+    @PostMapping("/reset-password")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseEntity<Map<String, String>> resetPassword(
+            final @RequestBody @Validated CreateRequest<ResetPasswordRequest> request) {
+        ResetPasswordDto resetPasswordDto = request.getData().generateDto();
+        String token = resetPasswordDto.getToken();
+        String email = resetPasswordDto.getEmail();
+        String newPassword = resetPasswordDto.getNewPassword();
+
+        userService.resetPassword(token, email, newPassword);
+
+        return ResponseEntity.ok(Map.of("message", "Password has been reset successfully"));
     }
 
     @GetMapping("/context")

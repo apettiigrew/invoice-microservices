@@ -27,6 +27,6 @@ public class UserRegisterDto implements ResourceDto<UUID> {
     private String lastName;
 
     @NotNull(message = "Password is required")
-    @Size(max = 255, message ="This field can only be 255 characters long")
+    @Size(min = 8, max = 255, message = "Password must be between 8 and 255 characters")
     private String password;
 }
