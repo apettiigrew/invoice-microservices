@@ -4,6 +4,8 @@ import com.apettigrew.user.config.KeycloakConfigProperties;
 import com.apettigrew.user.dtos.KeycloakTokenDto;
 import com.apettigrew.user.dtos.UserDto;
 import com.apettigrew.user.dtos.UserRegisterDto;
+import com.apettigrew.user.exceptions.UserAlreadyExistsException;
+import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.OAuth2Constants;
@@ -64,6 +66,34 @@ public class UserService {
         }
     }
 
+    public void logout(String refreshToken) {
+        String logoutUrl = keycloakConfigProperties.getServerUrl() + "/realms/" + keycloakConfigProperties.getRealm() + "/protocol/openid-connect/logout";
+
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("client_id", keycloakConfigProperties.getAppClientId());
+        String clientSecret = keycloakConfigProperties.getAppClientSecret();
+        if (clientSecret != null && !clientSecret.isBlank()) {
+            map.add("client_secret", clientSecret);
+        }
+        map.add("refresh_token", refreshToken);
+
+        try {
+            var response = restClient.post()
+                    .uri(logoutUrl)
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(map)
+                    .retrieve()
+                    .toBodilessEntity();
+
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new RuntimeException("Logout failed with status: " + response.getStatusCode());
+            }
+        } catch (Exception e) {
+            logger.error("Failed to logout user from Keycloak", e);
+            throw new RuntimeException("Logout failed", e);
+        }
+    }
+
     public UserDto getKeycloakUserbyId(String id) {
         UserRepresentation userRep = keycloak.realm(keycloakConfigProperties.getRealm()).users().get(id).toRepresentation();
         return modelMapper.map(userRep, UserDto.class);
@@ -85,7 +115,8 @@ public class UserService {
 
     public UserDto createUser(UserRegisterDto userDto) {
         UserRepresentation userRep = new UserRepresentation();
-        userRep.setUsername(userDto.getUserName());
+        // Keycloak requires username - using email as username is a common pattern
+        userRep.setUsername(userDto.getEmail());
         userRep.setFirstName(userDto.getFirstName());
         userRep.setLastName(userDto.getLastName());
         userRep.setEmail(userDto.getEmail());
@@ -95,18 +126,83 @@ public class UserService {
         CredentialRepresentation cred = new CredentialRepresentation();
         cred.setTemporary(false);
         cred.setValue(userDto.getPassword());
+        cred.setType(CredentialRepresentation.PASSWORD);
         creds.add(cred);
         userRep.setCredentials(creds);
 
-        try  {
-            Response response = keycloak.realm(keycloakConfigProperties.getRealm()).users().create(userRep);
-            CreatedResponseUtil.getCreatedId(response);
-            // User created successfully
-        } catch(Exception e){
-            logger.error(e.getMessage());
-            throw new RuntimeException(e.getMessage());
+        Response response = null;
+        try {
+            response = keycloak.realm(keycloakConfigProperties.getRealm())
+                    .users()
+                    .create(userRep);
+
+            int status = response.getStatus();
+
+            switch (status) {
+                case 201: // Created
+                    String userId = CreatedResponseUtil.getCreatedId(response);
+                    UserRepresentation createdUser = keycloak.realm(keycloakConfigProperties.getRealm())
+                            .users()
+                            .get(userId)
+                            .toRepresentation();
+                    return modelMapper.map(createdUser, UserDto.class);
+
+                case 409: // Conflict
+                    logger.error("User already exists with email: {}", userDto.getEmail());
+                    throw new UserAlreadyExistsException("User with this email already exists");
+
+                default:
+                    // Try to read error response body for more details
+                    String errorBody = null;
+                    try {
+                        if (response.hasEntity()) {
+                            errorBody = response.readEntity(String.class);
+                        }
+                    } catch (Exception ex) {
+                        logger.debug("Could not read error response body", ex);
+                    }
+                    String errorMessage = "Failed to create user. Keycloak returned status: " + status;
+                    if (errorBody != null) {
+                        errorMessage += ". Error details: " + errorBody;
+                    }
+                    logger.error(errorMessage);
+                    throw new RuntimeException(errorMessage);
+            }
+
+        } catch (ClientErrorException e) {
+            int status = e.getResponse() != null ? e.getResponse().getStatus() : 0;
+
+            if (status == 409) {
+                logger.error("User already exists with email: {}", userDto.getEmail());
+                throw new UserAlreadyExistsException("User with this email already exists", e);
+            }
+
+            // Try to read error response body for more details
+            String errorBody = null;
+            try {
+                if (e.getResponse() != null && e.getResponse().hasEntity()) {
+                    errorBody = e.getResponse().readEntity(String.class);
+                }
+            } catch (Exception ex) {
+                logger.debug("Could not read error response body from ClientErrorException", ex);
+            }
+            
+            String errorMessage = "Keycloak client error creating user: Status " + status;
+            if (errorBody != null) {
+                errorMessage += ". Error details: " + errorBody;
+            }
+            logger.error(errorMessage, e);
+            throw new RuntimeException("Failed to create user: " + (errorBody != null ? errorBody : e.getMessage()), e);
+
+        } catch (Exception e) {
+            logger.error("Unexpected error creating user in Keycloak: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to create user: " + e.getMessage(), e);
+
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
-        return modelMapper.map(userRep, UserDto.class);
     }
 
     public UserDto getUserById(String id){
@@ -126,29 +222,5 @@ public class UserService {
         }
 
         return modelMapper.map(userRep, UserDto.class);
-    }
-
-    public String logout(String refreshToken) {
-        String revokeUrl = keycloakConfigProperties.getServerUrl() + "/realms/" + keycloakConfigProperties.getRealm() + "/protocol/openid-connect/revoke";
-
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("client_id", keycloakConfigProperties.getAppClientId());
-        map.add("client_secret", keycloakConfigProperties.getAppClientSecret());
-        map.add("token", refreshToken);
-        map.add("token_type_hint", "refresh_token");
-
-        try {
-            restClient.post()
-                .uri(revokeUrl)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(map)
-                .retrieve()
-                .toEntity(String.class);
-
-            return "User logged out successfully.";
-        } catch (Exception e) {
-            logger.error("Logout failed: {}", e.getMessage());
-            throw new RuntimeException("Logout failed: " + e.getMessage());
-        }
     }
 }

@@ -69,6 +69,8 @@ public class UserController {
         return new SingleResourceResponse<>(UserResource.toResource(updatedUser));
     }
 
+   
+
     @GetMapping("/contact-info")
     public ResponseEntity<ContactInfoDto> getContactInfo() {
         return ResponseEntity
