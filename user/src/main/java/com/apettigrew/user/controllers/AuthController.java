@@ -52,6 +52,13 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/refresh")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseEntity<KeycloakTokenDto> refreshToken(@RequestParam("refresh_token") String refreshToken) {
+        KeycloakTokenDto token = userService.refreshToken(refreshToken);
+        return new ResponseEntity<>(token, HttpStatus.OK);
+    }
+
     @GetMapping("/context")
     public Map<String, String> getUserContext(
             @RequestHeader("X-User-Id") String userId,

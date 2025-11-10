@@ -94,6 +94,37 @@ public class UserService {
         }
     }
 
+    public KeycloakTokenDto refreshToken(String refreshToken) {
+        String tokenUrl = keycloakConfigProperties.getServerUrl() + "/realms/" + keycloakConfigProperties.getRealm() + "/protocol/openid-connect/token";
+
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("grant_type", "refresh_token");
+        map.add("client_id", keycloakConfigProperties.getAppClientId());
+        String clientSecret = keycloakConfigProperties.getAppClientSecret();
+        if (clientSecret != null && !clientSecret.isBlank()) {
+            map.add("client_secret", clientSecret);
+        }
+        map.add("refresh_token", refreshToken);
+
+        try {
+            var response = restClient.post()
+                    .uri(tokenUrl)
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(map)
+                    .retrieve()
+                    .toEntity(KeycloakTokenDto.class);
+
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new RuntimeException("Token refresh failed with status: " + response.getStatusCode());
+            }
+
+            return response.getBody();
+        } catch (Exception e) {
+            logger.error("Failed to refresh token in Keycloak", e);
+            throw new RuntimeException("Token refresh failed", e);
+        }
+    }
+
     public UserDto getKeycloakUserbyId(String id) {
         UserRepresentation userRep = keycloak.realm(keycloakConfigProperties.getRealm()).users().get(id).toRepresentation();
         return modelMapper.map(userRep, UserDto.class);
