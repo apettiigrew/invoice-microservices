@@ -23,7 +23,7 @@ public class InvoiceDto implements ResourceDto<UUID> {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int id;
 
-    @NotNull(message = "User Id is required")
+    // userId is set from X-User-Id header, not from request body
     private String userId;
 
     @NotNull(message = "Payment due date is required")

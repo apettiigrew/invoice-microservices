@@ -12,9 +12,7 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 @Entity
 @Table(name = "invoices")
 public class Invoice {

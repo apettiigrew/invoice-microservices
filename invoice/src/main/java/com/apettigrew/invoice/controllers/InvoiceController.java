@@ -42,23 +42,27 @@ public class InvoiceController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public SingleResourceResponse<InvoiceResource> createInvoice(final @Valid @RequestBody CreateRequest<InvoiceCreateRequest> requestData) {
+    public SingleResourceResponse<InvoiceResource> createInvoice(
+            @RequestHeader("X-User-Id") String userId,
+            final @Valid @RequestBody CreateRequest<InvoiceCreateRequest> requestData) {
         InvoiceDto invoiceDto = requestData.getData().generateDto();
-        Invoice savedInvoice = invoiceService.createInvoice(invoiceDto);
+        Invoice savedInvoice = invoiceService.createInvoice(invoiceDto, userId);
 
         return new SingleResourceResponse<>(InvoiceResource.toResource(savedInvoice));
     }
 
     @GetMapping
     public MultipleResourceResponse<InvoiceResource> getAllInvoices(
+            @RequestHeader("X-User-Id") String userId,
             @RequestHeader("ap-correlation-id")
             String correlationId,
             @PageableDefault(size = 10, direction = Sort.Direction.ASC) Pageable pageable,
             @RequestParam(value = "status", required = false) InvoiceStatus status) {
 
         logger.debug("ap-correlation-id found: {} ", correlationId);
+        logger.debug("X-User-Id found: {} ", userId);
 
-        Page<Invoice> invoices = invoiceService.getAllInvoices(pageable,status);
+        Page<Invoice> invoices = invoiceService.getAllInvoices(userId, pageable, status);
 
         final Page<InvoiceResource> invoiceResourcePage = new PageImpl<>(
                 invoices.getContent()
@@ -72,25 +76,32 @@ public class InvoiceController {
     }
 
     @GetMapping("/{id}")
-    public SingleResourceResponse<InvoiceResource> getInvoiceById(final @PathVariable("id") String id) {
-        Invoice invoice = invoiceService.getInvoiceById(id);
+    public SingleResourceResponse<InvoiceResource> getInvoiceById(
+            @RequestHeader("X-User-Id") String userId,
+            final @PathVariable("id") Integer id) {
+        Invoice invoice = invoiceService.getInvoiceById(id, userId);
         return new SingleResourceResponse<>(InvoiceResource.toResource(invoice));
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public SingleResourceResponse<InvoiceResource> updateInvoice(final @PathVariable String id, @RequestBody @Validated UpdateRequest<InvoiceCreateRequest> requestData) {
+    public SingleResourceResponse<InvoiceResource> updateInvoice(
+            @RequestHeader("X-User-Id") String userId,
+            final @PathVariable Integer id,
+            @RequestBody @Validated UpdateRequest<InvoiceCreateRequest> requestData) {
         InvoiceDto invoiceDto = requestData.getData().generateDto();
 
-        Invoice updatedInvoice = invoiceService.updateInvoice(id, invoiceDto);
+        Invoice updatedInvoice = invoiceService.updateInvoice(id, invoiceDto, userId);
         return new SingleResourceResponse<>(InvoiceResource.toResource(updatedInvoice));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteInvoice(final @PathVariable String id) {
+    public ResponseEntity<Void> deleteInvoice(
+            @RequestHeader("X-User-Id") String userId,
+            final @PathVariable Integer id) {
         try {
-            invoiceService.deleteInvoice(id);
+            invoiceService.deleteInvoice(id, userId);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseEntity.internalServerError().build();

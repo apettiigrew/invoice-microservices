@@ -35,21 +35,23 @@ public class InvoiceService {
     @Qualifier("skipNullModelMapper")
     private ModelMapper modelMapper;
 
-    public Page<Invoice> getAllInvoices(Pageable pageable, InvoiceStatus status) {
+    public Page<Invoice> getAllInvoices(String userId, Pageable pageable, InvoiceStatus status) {
         if(status != null){
-            return invoiceRepository.findByStatus(status,pageable);
+            return invoiceRepository.findByUserIdAndStatus(userId, status, pageable);
         }
 
-        return invoiceRepository.findAllActive(pageable);
+        return invoiceRepository.findAllActiveByUserId(userId, pageable);
     }
 
-    public Invoice getInvoiceById(String id) {
-        return invoiceRepository.findById(id).orElseThrow(() -> new InvoiceNotFoundException("Invoice ID "+id+" not found"));
+    public Invoice getInvoiceById(Integer id, String userId) {
+        return invoiceRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new InvoiceNotFoundException("Invoice ID "+id+" not found"));
     }
 
-    public Invoice createInvoice(InvoiceDto invoiceDto) {
+    public Invoice createInvoice(InvoiceDto invoiceDto, String userId) {
         ObjectMapper objectMapper = new ObjectMapper();
         Invoice invoice = modelMapper.map(invoiceDto, Invoice.class);
+        invoice.setUserId(userId);
         Invoice savedInvoice;
         
         try {
@@ -73,12 +75,14 @@ public class InvoiceService {
         log.info("Is the Communication request successfully triggered ? : {}", result);
     }
 
-    public Invoice updateInvoice(String id, com.apettigrew.invoice.dtos.InvoiceDto invoiceDto) {
-        Invoice existingInvoice = invoiceRepository.findById(id).orElseThrow(() -> new RuntimeException("Invoice not found"));
+    public Invoice updateInvoice(Integer id, com.apettigrew.invoice.dtos.InvoiceDto invoiceDto, String userId) {
+        Invoice existingInvoice = invoiceRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new InvoiceNotFoundException("Invoice ID "+id+" not found"));
         ObjectMapper objectMapper = new ObjectMapper();
         int existingId = existingInvoice.getId();
         modelMapper.map(invoiceDto,existingInvoice);
         existingInvoice.setId(existingId);
+        existingInvoice.setUserId(userId); // Ensure userId is not overwritten
         Invoice updatedInvoice;
 
         try {
@@ -92,9 +96,9 @@ public class InvoiceService {
        return updatedInvoice;
     }
 
-    public void deleteInvoice(String id) {
-        Invoice invoice = invoiceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Invoice not found"));
+    public void deleteInvoice(Integer id, String userId) {
+        Invoice invoice = invoiceRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new InvoiceNotFoundException("Invoice ID "+id+" not found"));
         invoice.setDeletedAt(LocalDateTime.now());
         invoiceRepository.save(invoice);
     }
