@@ -34,11 +34,8 @@ import java.util.stream.Collectors;
 public class InvoiceController {
     private static final Logger logger = LoggerFactory.getLogger(InvoiceController.class);
 
-    private final InvoiceService invoiceService;
-
-    public InvoiceController(InvoiceService invoiceService) {
-        this.invoiceService = invoiceService;
-    }
+    @Autowired
+    private InvoiceService invoiceService;
 
     @Autowired
     private ContactInfoDto contactInfoDto;
