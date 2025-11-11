@@ -2,6 +2,7 @@ package com.apettigrew.user.services;
 
 import com.apettigrew.user.config.KeycloakConfigProperties;
 import com.apettigrew.user.dtos.KeycloakTokenDto;
+import com.apettigrew.user.dtos.NameUpdateDto;
 import com.apettigrew.user.dtos.UserDto;
 import com.apettigrew.user.dtos.UserRegisterDto;
 import com.apettigrew.user.exceptions.InvalidCredentialsException;
@@ -266,11 +267,10 @@ public class UserService {
         return modelMapper.map(userRep, UserDto.class);
     }
 
-    public UserDto updateUser(String id,UserDto userDto){
+    public UserDto updateUserName(String id, NameUpdateDto nameUpdateDto) {
         UserRepresentation userRep = keycloak.realm(keycloakConfigProperties.getRealm()).users().get(id).toRepresentation();
-        userRep.setFirstName(userDto.getFirstName());
-        userRep.setLastName(userDto.getLastName());
-        userRep.setEmail(userDto.getEmail());
+        userRep.setFirstName(nameUpdateDto.getFirstName());
+        userRep.setLastName(nameUpdateDto.getLastName());
         try {
             keycloak.realm(keycloakConfigProperties.getRealm()).users().get(id).update(userRep);
         } catch (Exception e) {

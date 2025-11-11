@@ -4,8 +4,8 @@ import com.apettigrew.user.dtos.ContactInfoDto;
 import com.apettigrew.user.dtos.UserDto;
 import com.apettigrew.user.jsonapi.JsonApiConstants;
 import com.apettigrew.user.jsonapi.SingleResourceResponse;
+import com.apettigrew.user.jsonapi.requests.NameUpdateRequest;
 import com.apettigrew.user.jsonapi.requests.UpdateRequest;
-import com.apettigrew.user.jsonapi.requests.UserUpdateRequest;
 import com.apettigrew.user.jsonapi.resources.UserResource;
 import com.apettigrew.user.services.UserService;
 import org.slf4j.Logger;
@@ -36,11 +36,14 @@ public class UserController {
         return new SingleResourceResponse<>(UserResource.toResource(user));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/me")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public SingleResourceResponse<UserResource> updateUser(final @PathVariable String id, @RequestBody @Validated UpdateRequest<UserUpdateRequest> userDto) {
-        var user = userDto.getData().generateDto();
-        UserDto updatedUser = userService.updateUser(id,user);
+    public SingleResourceResponse<UserResource> updateUserProfile(
+            @RequestHeader("X-User-Id") String userId,
+            @RequestBody @Validated UpdateRequest<NameUpdateRequest> nameUpdateRequest) {
+        var nameUpdateDto = nameUpdateRequest.getData().generateDto();
+        UserDto updatedUser = userService.updateUserName(userId, nameUpdateDto);
+
         return new SingleResourceResponse<>(UserResource.toResource(updatedUser));
     }
 
