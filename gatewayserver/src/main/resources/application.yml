@@ -16,7 +16,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: "http://localhost:7080/realms/master/protocol/openid-connect/certs"
+          # Using issuer-uri allows Spring Security to automatically discover the JWK set URI
+          issuer-uri: "http://localhost:7080/realms/master"
   data:
     redis:
       connect-timeout: 2s
@@ -48,6 +49,10 @@ logging:
     com:
       apettigrew:
         gatewayserver: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.web.server: DEBUG
+    org.springframework.cloud.gateway: DEBUG
   pattern:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 

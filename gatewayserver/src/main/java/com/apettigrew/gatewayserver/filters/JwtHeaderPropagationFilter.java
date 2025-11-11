@@ -20,14 +20,12 @@ public class JwtHeaderPropagationFilter implements GlobalFilter, Ordered {
                         // Extract claims
                         final String userId = jwt.getClaimAsString("sub");
                         final String username = jwt.getClaimAsString("preferred_username");
-                        final String roles = String.join(",", jwt.getClaimAsStringList("roles")); // or "scope"
 
                         // Add them as headers to be forwarded downstream
                         ServerWebExchange mutatedExchange = exchange.mutate()
                                 .request(req -> req.headers(headers -> {
                                     headers.set("X-User-Id", userId);
                                     headers.set("X-Username", username);
-                                    headers.set("X-Roles", roles);
                                 }))
                                 .build();
                         return chain.filter(mutatedExchange);

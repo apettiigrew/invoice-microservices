@@ -31,8 +31,8 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping("/me")
-    public SingleResourceResponse<UserResource> getUserByUuid(final @PathVariable("id") String id) {
-        UserDto user = userService.getUserById(id);
+    public SingleResourceResponse<UserResource> getUserByUuid(@RequestHeader("X-User-Id") String userId) {
+        UserDto user = userService.getUserById(userId);
         return new SingleResourceResponse<>(UserResource.toResource(user));
     }
 
@@ -55,13 +55,11 @@ public class UserController {
     @GetMapping("/context")
     public Map<String, String> getUserContext(
             @RequestHeader("X-User-Id") String userId,
-            @RequestHeader("X-Username") String username,
-            @RequestHeader(value = "X-Roles", required = false) String roles
+            @RequestHeader("X-Username") String username
     ) {
         return Map.of(
                 "userId", userId,
-                "username", username,
-                "roles", roles
+                "username", username
         );
     }
 
