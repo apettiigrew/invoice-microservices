@@ -4,6 +4,7 @@ import com.apettigrew.user.config.KeycloakConfigProperties;
 import com.apettigrew.user.dtos.KeycloakTokenDto;
 import com.apettigrew.user.dtos.UserDto;
 import com.apettigrew.user.dtos.UserRegisterDto;
+import com.apettigrew.user.exceptions.InvalidCredentialsException;
 import com.apettigrew.user.exceptions.UserAlreadyExistsException;
 import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.NotFoundException;
@@ -21,10 +22,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
@@ -64,8 +67,27 @@ public class UserService {
                 .toEntity(KeycloakTokenDto.class);
 
             return response.getBody();
+        } catch (HttpClientErrorException.Unauthorized e) {
+            // Check if the error response contains "Invalid user credentials"
+            String responseBody = e.getResponseBodyAsString();
+            if (responseBody != null && responseBody.contains("Invalid user credentials")) {
+                logger.warn("Invalid credentials provided for username: {}", username);
+                throw new InvalidCredentialsException("Invalid user credentials", e);
+            }
+            // For other 401 errors, still throw InvalidCredentialsException
+            logger.warn("Unauthorized error during login for username: {}", username);
+            throw new InvalidCredentialsException("Invalid user credentials", e);
+        } catch (HttpClientErrorException e) {
+            // Handle other HTTP client errors
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                logger.warn("Unauthorized error during login for username: {}", username);
+                throw new InvalidCredentialsException("Invalid user credentials", e);
+            }
+            logger.error("HTTP client error during login: {}", e.getMessage(), e);
+            throw new RuntimeException("Login failed: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            logger.error("Unexpected error during login: {}", e.getMessage(), e);
+            throw new RuntimeException("Login failed: " + e.getMessage(), e);
         }
     }
 
