@@ -25,8 +25,8 @@ public class GatewayserverApplication {
 	public RouteLocator customRouteLocator(RouteLocatorBuilder routeLocatorBuilder) {
 		return routeLocatorBuilder.routes()
 				.route(p -> p
-					.path("/api/v1/invoices/**")
-					.filters( f -> f.rewritePath("/api/v1/invoices/(?<segment>.*)","/${segment}")
+					.path("/api/v1/invoices", "/api/v1/invoices/**")
+					.filters( f -> f.rewritePath("/api/v1/invoices/?(?<segment>.*)","/${segment}")
 							.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
 							.circuitBreaker(config->config.setName("invoicesCircuitBreaker"))
 							.retry((retryConfig ->
