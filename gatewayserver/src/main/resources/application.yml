@@ -1,8 +1,11 @@
+server:
+  port: ${SERVER_PORT:8072}
+
 spring:
   application:
     name: "gatewayserver"
   config:
-    import: "optional:configserver:http://localhost:8071/"
+    import: "optional:configserver:http://configserver:8071/"
   cloud:
     gateway:
       discovery:
@@ -12,17 +15,12 @@ spring:
       httpClient:
           connect-timeout: 1000
           response-timeout: 2s
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          # Using issuer-uri allows Spring Security to automatically discover the JWK set URI
-          issuer-uri: "http://localhost:7080/realms/master"
+
   data:
     redis:
       connect-timeout: 2s
-      host: localhost
-      port: 6379
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
       timeout: 1s
 management:
   endpoints:
