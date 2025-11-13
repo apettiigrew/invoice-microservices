@@ -1,6 +1,8 @@
 package com.apettigrew.invoice.dtos;
 
+import com.apettigrew.invoice.enums.InvoiceStatus;
 import com.apettigrew.invoice.jsonapi.ResourceDto;
+import com.apettigrew.invoice.validation.ValidInvoiceStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
@@ -24,13 +26,16 @@ public class InvoiceDto implements ResourceDto<UUID> {
     private int id;
 
     @NotNull(message = "Payment due date is required")
+    @Future(message = "Payment due date must be in the future")
     private LocalDate paymentDue;
 
     @NotBlank(message = "Description is required")
+    @Size(min=16, max = 255, message = "Description needs to be between 16 and 255 characters")
     private String description;
 
     @NotNull(message = "Payment terms are required")
-    @Min(value = 0, message = "Payment terms must be non-negative") // Example: at least 0 days
+    @Min(value = 1, message = "Payment terms must be non-negative")
+    @Max(value = 6, message = "Payment terms cannot be more than 6 months")
     private Integer paymentTerms;
 
     @NotBlank(message = "Client name is required")
@@ -50,9 +55,9 @@ public class InvoiceDto implements ResourceDto<UUID> {
     @NotNull(message = "Client address is required")
     private AddressDto clientAddress;
 
-    @NotBlank(message = "Status is required")
-    @Size(max = 50, message = "Status cannot exceed 50 characters")
-    private String status;
+    @NotNull(message = "Status is required")
+    @ValidInvoiceStatus
+    private InvoiceStatus status;
 
     @NotNull(message = "Total is required")
     @DecimalMin(value = "0.00", message = "Total must be at least 0.00")
