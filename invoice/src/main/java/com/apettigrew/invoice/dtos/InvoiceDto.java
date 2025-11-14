@@ -14,6 +14,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -59,8 +60,13 @@ public class InvoiceDto implements ResourceDto<UUID> {
     @ValidInvoiceStatus
     private InvoiceStatus status;
 
-    @NotNull(message = "Total is required")
-    @DecimalMin(value = "0.00", message = "Total must be at least 0.00")
-    @Digits(integer = 8, fraction = 2, message = "Total format is invalid (e.g., 12345678.90)") // Adjust integer part as needed
+    // Total is calculated by the API from invoice items (qty * price for each, then sum)
+    // This field is read-only and should NOT be set by the user in requests
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private BigDecimal total;
+
+    @Valid
+    @NotNull(message = "Invoice items are required")
+    @Size(min = 1, message = "Invoice must have at least 1 invoice item")
+    private List<InvoiceItemDto> invoiceItems;
 }

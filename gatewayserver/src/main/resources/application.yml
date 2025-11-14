@@ -1,11 +1,13 @@
 server:
   port: ${SERVER_PORT:8072}
-
 spring:
   application:
     name: "gatewayserver"
+  profiles:
+    active:
+      - "local"
   config:
-    import: "optional:configserver:http://configserver:8071/"
+    import: "optional:configserver:http://localhost:8071/"
   cloud:
     gateway:
       discovery:
@@ -15,7 +17,6 @@ spring:
       httpClient:
           connect-timeout: 1000
           response-timeout: 2s
-
   data:
     redis:
       connect-timeout: 2s
@@ -38,8 +39,8 @@ management:
       application: ${spring.application.name}
 info:
   app:
-    name: "gatewayserver"
-    description: "Apettigrew Gateway Server Application"
+    name: ${spring.application.name}
+    description: "SaaS Invoice MS Gateway Server Application"
     version: "1.0.0"
 
 logging:
