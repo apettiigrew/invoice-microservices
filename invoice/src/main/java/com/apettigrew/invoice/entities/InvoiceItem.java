@@ -1,26 +1,23 @@
 package com.apettigrew.invoice.entities;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 @Entity
-@Table(name = "items")
+@Table(name = "invoice_items")
 public class InvoiceItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id", nullable = false)
@@ -40,13 +37,13 @@ public class InvoiceItem {
 
     @Column(name="created_at")
     @CreationTimestamp
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name="updated_at")
     @UpdateTimestamp
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
     @Column(name="deleted_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date deletedAt;
+    private LocalDateTime deletedAt;
 }
+

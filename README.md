@@ -247,3 +247,11 @@ The charts are located in the `helm` directory.
 
 ### Contributions are welcome!
 Invoice Microservice system is open source, and would greatly appreciate your help. Feel free to suggest and implement any improvements.
+
+
+### Database Migration
+
+
+```declarative
+mvn flyway:migrate
+```

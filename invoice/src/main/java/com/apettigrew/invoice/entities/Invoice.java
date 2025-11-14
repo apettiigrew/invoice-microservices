@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -62,4 +63,7 @@ public class Invoice {
     @Column(name="deleted_at")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<InvoiceItem> invoiceItems;
 }
