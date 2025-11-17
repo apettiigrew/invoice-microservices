@@ -23,7 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -107,6 +110,55 @@ public class InvoiceService {
         return invoiceItems;
     }
 
+    /**
+     * Updates invoice items intelligently based on IDs:
+     * - Items with IDs: updates existing items
+     * - Items without IDs (null or 0): creates new items
+     * - Existing items not in the request: removes them
+     */
+    private List<InvoiceItem> updateInvoiceItems(
+            List<InvoiceItem> existingItems, 
+            List<InvoiceItemDto> itemDtos, 
+            Invoice invoice) {
+        
+        List<InvoiceItem> updatedItems = new ArrayList<>();
+        
+        // Create a map of existing items by ID for quick lookup
+        Map<Integer, InvoiceItem> existingItemsMap = new HashMap<>();
+        if (existingItems != null) {
+            for (InvoiceItem item : existingItems) {
+                existingItemsMap.put(item.getId(), item);
+            }
+        }
+        
+        // Process each item in the request
+        for (InvoiceItemDto itemDto : itemDtos) {
+            Integer itemId = itemDto.getId();
+            
+            if (itemId != null && itemId > 0 && existingItemsMap.containsKey(itemId)) {
+                // Update existing item
+                InvoiceItem existingItem = existingItemsMap.get(itemId);
+                existingItem.setName(itemDto.getName());
+                existingItem.setQuantity(itemDto.getQuantity());
+                existingItem.setPrice(itemDto.getPrice());
+                // Recalculate total
+                BigDecimal itemTotal = itemDto.getPrice().multiply(BigDecimal.valueOf(itemDto.getQuantity()));
+                existingItem.setTotal(itemTotal);
+                updatedItems.add(existingItem);
+            } else {
+                
+                InvoiceItem newItem = modelMapper.map(itemDto, InvoiceItem.class);
+
+                newItem.setInvoice(invoice);
+                BigDecimal itemTotal = itemDto.getPrice().multiply(BigDecimal.valueOf(itemDto.getQuantity()));
+                newItem.setTotal(itemTotal);
+                updatedItems.add(newItem);
+            }
+        }
+        
+        return updatedItems;
+    }
+
     private void sendCommunication(Invoice invoice) {
         var invoiceDto = modelMapper.map(invoice,InvoiceDto.class);
 
@@ -115,7 +167,7 @@ public class InvoiceService {
         log.info("Is the Communication request successfully triggered ? : {}", result);
     }
 
-    public Invoice updateInvoice(Integer id, com.apettigrew.invoice.dtos.InvoiceDto invoiceDto, String userId) {
+    public Invoice updateInvoice(Integer id, InvoiceDto invoiceDto, String userId) {
         // Validate that invoice items are present
         if (invoiceDto.getInvoiceItems() == null || invoiceDto.getInvoiceItems().isEmpty()) {
             throw new IllegalArgumentException("Invoice must have at least 1 invoice item");
@@ -123,28 +175,35 @@ public class InvoiceService {
 
         Invoice existingInvoice = invoiceRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new InvoiceNotFoundException("Invoice ID "+id+" not found"));
-        ObjectMapper objectMapper = new ObjectMapper();
+
+
         int existingId = existingInvoice.getId();
+
+        // Update invoice properties
         modelMapper.map(invoiceDto,existingInvoice);
         existingInvoice.setId(existingId);
-        existingInvoice.setUserId(userId); // Ensure userId is not overwritten
+
+        // Ensure userId is not overwritten
+        existingInvoice.setUserId(userId);
+
+        // Update invoice items intelligently based on IDs
+        List<InvoiceItem> updatedInvoiceItems = updateInvoiceItems(
+                existingInvoice.getInvoiceItems(), 
+                invoiceDto.getInvoiceItems(), 
+                existingInvoice
+        );
+
+        existingInvoice.setInvoiceItems(updatedInvoiceItems);
+
+        // calculate the new total invoices based on any updated invoice items
+        List<InvoiceItemDto> updatedInvoiceItemDtos = updatedInvoiceItems.stream().map((item) -> modelMapper.map(item, InvoiceItemDto.class)).collect(Collectors.toList());
         
-        // Calculate total from invoice items (qty * price for each, then sum)
-        // Note: We explicitly calculate and set the total, ignoring any value that may have been
-        // passed in the DTO (which should be null anyway due to @JsonProperty(access = READ_ONLY))
-        BigDecimal invoiceTotal = calculateInvoiceTotal(invoiceDto.getInvoiceItems());
+        BigDecimal invoiceTotal = calculateInvoiceTotal(updatedInvoiceItemDtos);
         existingInvoice.setTotal(invoiceTotal);
-        
-        // Update invoice items - clear existing and create new ones
-        if (existingInvoice.getInvoiceItems() != null) {
-            existingInvoice.getInvoiceItems().clear();
-        }
-        List<InvoiceItem> invoiceItems = createInvoiceItems(invoiceDto.getInvoiceItems(), existingInvoice);
-        existingInvoice.setInvoiceItems(invoiceItems);
-        
         Invoice updatedInvoice;
 
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
             existingInvoice.setSenderAddress(objectMapper.writeValueAsString(invoiceDto.getSenderAddress()));
             existingInvoice.setClientAddress(objectMapper.writeValueAsString(invoiceDto.getClientAddress()));
             updatedInvoice = invoiceRepository.save(existingInvoice);

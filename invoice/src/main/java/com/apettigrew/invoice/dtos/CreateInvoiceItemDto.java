@@ -14,8 +14,8 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class InvoiceItemDto {
-
+public class CreateInvoiceItemDto {
+   
     private int id;
 
     @NotBlank(message = "Item name is required")

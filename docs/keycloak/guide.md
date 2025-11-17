@@ -77,3 +77,18 @@ Using Keycloak Admin Console (Recommended for Initial Setup)
 ### 5. Environment Variables
 - While you **can add environment variables** in your Helm chart (`configmap-env-vars.yaml`), Keycloak **does not support configuring email via environment variables directly**
 - Email settings **must be set via Admin Console or Keycloak Admin API**
+
+
+### Qt Client Requirements
+
+When configuring the **Qt Client**, make sure to provide the following:
+
+1. **Web Origin**  
+   This defines the trusted base URL from which authentication requests will originate.  
+   Example: `http://localhost:8080`
+
+2. **Redirect URI**  
+   After authentication, the authorization server will redirect the user back to this URI.  
+   Example: `http://localhost:8080/callback`
+
+Both values must be set correctly for the Qt Client to authenticate successfully.

@@ -319,9 +319,37 @@ public class UserService {
         } catch (jakarta.ws.rs.NotFoundException e) {
             logger.warn("User not found for password reset: {}", email);
             // For security reasons, don't reveal if the email exists or not
+        } catch (ClientErrorException e) {
+            // Extract error details from Keycloak response
+            String errorMessage = "Failed to send password reset email";
+            String errorDetails = null;
+            
+            try {
+                if (e.getResponse() != null && e.getResponse().hasEntity()) {
+                    errorDetails = e.getResponse().readEntity(String.class);
+                    logger.error("Keycloak error response: {}", errorDetails);
+                }
+            } catch (Exception ex) {
+                logger.debug("Could not read error response body from Keycloak", ex);
+            }
+            
+            int statusCode = e.getResponse() != null ? e.getResponse().getStatus() : 0;
+            logger.error("Failed to send password reset email for user: {}. Keycloak returned status: {}. Error: {}", 
+                    email, statusCode, errorDetails != null ? errorDetails : e.getMessage(), e);
+            
+            // Provide more specific error message based on status code
+            if (statusCode == 500 || statusCode == 503) {
+                errorMessage = "Email service is currently unavailable. Please contact support or try again later.";
+            } else if (statusCode == 400) {
+                errorMessage = "Invalid request. Please verify the email configuration in Keycloak.";
+            } else {
+                errorMessage = "Failed to send password reset email. Please contact support if the issue persists.";
+            }
+            
+            throw new RuntimeException(errorMessage, e);
         } catch (Exception e) {
             logger.error("Failed to send password reset email for user: {}", email, e);
-            throw new RuntimeException("Failed to send password reset email", e);
+            throw new RuntimeException("Failed to send password reset email. Please contact support if the issue persists.", e);
         }
     }
 
