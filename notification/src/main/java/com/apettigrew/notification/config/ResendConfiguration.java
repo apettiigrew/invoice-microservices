@@ -1,7 +1,6 @@
 package com.apettigrew.notification.config;
 
-import com.sendgrid.SendGrid;
-import com.sendgrid.helpers.mail.objects.Email;
+import com.resend.Resend;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -14,15 +13,15 @@ class ResendConfiguration {
     private final ResendConfigurationProperties resendConfigurationProperties;
 
     @Bean
-    public SendGrid sendGrid() {
+    public Resend sendGrid() {
         String apiKey = resendConfigurationProperties.getApiKey();
-        return new SendGrid(apiKey);
+        return new Resend(apiKey);
     }
 
-    @Bean
-    public Email fromEmail() {
-        String fromEmail = resendConfigurationProperties.getFromEmail();
-        String fromName = resendConfigurationProperties.getFromName();
-        return new Email(fromEmail, fromName);
-    }
+//    @Bean
+//    public Email fromEmail() {
+//        String fromEmail = resendConfigurationProperties.getFromEmail();
+//        String fromName = resendConfigurationProperties.getFromName();
+//        return new Email(fromEmail, fromName);
+//    }
 }

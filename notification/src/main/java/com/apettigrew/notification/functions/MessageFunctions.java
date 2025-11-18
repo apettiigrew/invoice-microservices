@@ -2,6 +2,7 @@ package com.apettigrew.notification.functions;
 
 import com.apettigrew.notification.dto.InvoiceDto;
 import com.apettigrew.notification.service.EmailDispatcher;
+import com.resend.core.exception.ResendException;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +22,9 @@ public class MessageFunctions {
     public Function<InvoiceDto,InvoiceDto> email() {
         return invoiceDto -> {
             try {
-                emailDispatcher.dispatchHydrationAlert(invoiceDto.getClientEmail(),invoiceDto.getClientName());
+                emailDispatcher.dispatchEmail(invoiceDto.getClientEmail(),invoiceDto.getClientName());
                 log.info("Sending email with the details : " +  invoiceDto.toString());
-            } catch (IOException e) {
+            } catch (IOException | ResendException e) {
                 throw new RuntimeException(e);
             }
 
