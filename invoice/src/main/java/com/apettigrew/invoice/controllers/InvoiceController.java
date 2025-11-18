@@ -100,12 +100,8 @@ public class InvoiceController {
     public ResponseEntity<Void> deleteInvoice(
             @RequestHeader("X-User-Id") String userId,
             final @PathVariable Integer id) {
-        try {
-            invoiceService.deleteInvoice(id, userId);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        invoiceService.deleteInvoice(id, userId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/contact-info")
