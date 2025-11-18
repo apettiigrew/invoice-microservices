@@ -21,3 +21,5 @@ Observability
 - [Grafana](https://grafana.com/)
 - https://grafana.com/grafana/dashboards/4701-jvm-micrometer/
 - https://opentelemetry.io/
+
+- https://www.rabbitmq.com/

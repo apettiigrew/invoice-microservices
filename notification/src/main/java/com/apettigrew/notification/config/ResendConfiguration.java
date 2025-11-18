@@ -9,20 +9,20 @@ import org.springframework.context.annotation.Configuration;
 
 @AllArgsConstructor
 @Configuration
-@EnableConfigurationProperties(SendGridConfigurationProperties.class)
-class SendGridConfiguration {
-    private final SendGridConfigurationProperties sendGridConfigurationProperties;
+@EnableConfigurationProperties(ResendConfigurationProperties.class)
+class ResendConfiguration {
+    private final ResendConfigurationProperties resendConfigurationProperties;
 
     @Bean
     public SendGrid sendGrid() {
-        String apiKey = sendGridConfigurationProperties.getApiKey();
+        String apiKey = resendConfigurationProperties.getApiKey();
         return new SendGrid(apiKey);
     }
 
     @Bean
     public Email fromEmail() {
-        String fromEmail = sendGridConfigurationProperties.getFromEmail();
-        String fromName = sendGridConfigurationProperties.getFromName();
+        String fromEmail = resendConfigurationProperties.getFromEmail();
+        String fromName = resendConfigurationProperties.getFromName();
         return new Email(fromEmail, fromName);
     }
 }

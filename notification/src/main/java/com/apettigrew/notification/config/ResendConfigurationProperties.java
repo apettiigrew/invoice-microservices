@@ -12,8 +12,8 @@ import org.springframework.validation.annotation.Validated;
 @Setter
 @Getter
 @Validated
-@ConfigurationProperties(prefix = "com.notification.sendgrid")
-public class SendGridConfigurationProperties {
+@ConfigurationProperties(prefix = "com.notification.resend")
+public class ResendConfigurationProperties {
     @NotBlank
     @Pattern(regexp = "^SG[0-9a-zA-Z._]{67}$")
     private String apiKey;

@@ -1,7 +1,8 @@
 package com.apettigrew.notification.service;
 
 import com.apettigrew.notification.config.DynamicTemplatePersonalization;
-import com.apettigrew.notification.config.SendGridConfigurationProperties;
+import com.apettigrew.notification.config.ResendConfigurationProperties;
+import com.apettigrew.notification.exceptions.SendGridException;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -19,15 +20,15 @@ import java.io.IOException;
 @Slf4j
 @AllArgsConstructor
 @Service
-@EnableConfigurationProperties(SendGridConfigurationProperties.class)
+@EnableConfigurationProperties(ResendConfigurationProperties.class)
 public class EmailDispatcher {
     private static final String EMAIL_ENDPOINT = "mail/send";
 
     private final SendGrid sendGrid;
     private final Email fromEmail;
-    private final SendGridConfigurationProperties sendGridConfigurationProperties;
+    private final ResendConfigurationProperties sendGridConfigurationProperties;
 
-    public void dispatchEmail(String emailId, String subject, String body) throws IOException {
+    public void dispatchEmail(String emailId, String subject, String body) throws IOException, SendGridException {
         Email toEmail = new Email(emailId);
         Content content = new Content("text/plain", body);
         Mail mail = new Mail(fromEmail, subject, toEmail, content);
@@ -35,7 +36,7 @@ public class EmailDispatcher {
         sendRequest(mail);
     }
 
-    public void dispatchHydrationAlert(String emailId, String username) throws IOException {
+    public void dispatchHydrationAlert(String emailId, String username) throws IOException, SendGridException {
         Email toEmail = new Email(emailId);
         String templateId = sendGridConfigurationProperties.getDynamicTemplate().getTemplateId();
 
@@ -51,15 +52,32 @@ public class EmailDispatcher {
         sendRequest(mail);
     }
 
-    private void sendRequest(Mail mail) throws IOException {
+    private void sendRequest(Mail mail) throws IOException, SendGridException {
         Request request = new Request();
         request.setMethod(Method.POST);
         request.setEndpoint(EMAIL_ENDPOINT);
         request.setBody(mail.build());
 
         Response response = sendGrid.api(request);
-        log.info("Sendgrid email status code:", response.getStatusCode());
-        log.info("Sendgrid email body content:", response.getBody());
+        int statusCode = response.getStatusCode();
+        String responseBody = response.getBody() != null ? response.getBody() : "";
+
+        // Check if the response indicates success (2xx status codes)
+        if (statusCode >= 200 && statusCode < 300) {
+            log.info("SendGrid email sent successfully. Status code: {}, Response: {}", statusCode, responseBody);
+        } else {
+            // Handle error responses
+            String errorMessage = String.format(
+                "Failed to send email via SendGrid. Status code: %d, Response: %s",
+                statusCode,
+                responseBody
+            );
+            
+            log.error(errorMessage);
+            
+            // Throw exception with detailed error information
+            throw new SendGridException(errorMessage, statusCode, responseBody);
+        }
     }
 
 }
