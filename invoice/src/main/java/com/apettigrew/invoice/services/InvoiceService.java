@@ -51,40 +51,39 @@ public class InvoiceService {
     }
 
     public Invoice createInvoice(InvoiceDto invoiceDto, String userId) {
-        // Validate that invoice items are present
-        if (invoiceDto.getInvoiceItems() == null || invoiceDto.getInvoiceItems().isEmpty()) {
-            throw new IllegalArgumentException("Invoice must have at least 1 invoice item");
-        }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        Invoice invoice = modelMapper.map(invoiceDto, Invoice.class);
-        invoice.setUserId(userId);
-
-        // Calculate total from invoice items (qty * price for each, then sum)
-        // Note: We explicitly calculate and set the total, ignoring any value that may
-        // have been
-        // passed in the DTO (which should be null anyway due to @JsonProperty(access =
-        // READ_ONLY))
-        BigDecimal invoiceTotal = calculateInvoiceTotal(invoiceDto.getInvoiceItems());
-        invoice.setTotal(invoiceTotal);
-
-        // Create and set invoice items
-        List<InvoiceItem> invoiceItems = createInvoiceItems(invoiceDto.getInvoiceItems(), invoice);
-        invoice.setInvoiceItems(invoiceItems);
-
-        Invoice savedInvoice;
-
         try {
+            if (invoiceDto.getInvoiceItems() == null || invoiceDto.getInvoiceItems().isEmpty()) {
+                throw new IllegalArgumentException("Invoice must have at least 1 invoice item");
+            }
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            Invoice invoice = modelMapper.map(invoiceDto, Invoice.class);
+            invoice.setUserId(userId);
+
+            // Calculate total from invoice items (qty * price for each, then sum)
+            // Note: We explicitly calculate and set the total, ignoring any value that may
+            // have been
+            // passed in the DTO (which should be null anyway due to @JsonProperty(access =
+            // READ_ONLY))
+            BigDecimal invoiceTotal = calculateInvoiceTotal(invoiceDto.getInvoiceItems());
+            invoice.setTotal(invoiceTotal);
+
+            // Create and set invoice items
+            List<InvoiceItem> invoiceItems = createInvoiceItems(invoiceDto.getInvoiceItems(), invoice);
+            invoice.setInvoiceItems(invoiceItems);
+
+            Invoice savedInvoice;
+
+
             invoice.setSenderAddress(objectMapper.writeValueAsString(invoiceDto.getSenderAddress()));
             invoice.setClientAddress(objectMapper.writeValueAsString(invoiceDto.getClientAddress()));
             savedInvoice = invoiceRepository.save(invoice);
+            sendCommunication(savedInvoice);
+
+            return savedInvoice;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        sendCommunication(savedInvoice);
-
-        return savedInvoice;
     }
 
     private BigDecimal calculateInvoiceTotal(List<InvoiceItemDto> invoiceItemDtos) {
@@ -97,6 +96,7 @@ public class InvoiceService {
         List<InvoiceItem> invoiceItems = new ArrayList<>();
         for (InvoiceItemDto itemDto : invoiceItemDtos) {
             InvoiceItem item = modelMapper.map(itemDto, InvoiceItem.class);
+            item.setId(null); // Explicitly set ID to null for new entities
             item.setInvoice(invoice);
             // Calculate total for each item (qty * price)
             BigDecimal itemTotal = itemDto.getPrice().multiply(BigDecimal.valueOf(itemDto.getQuantity()));
@@ -158,8 +158,10 @@ public class InvoiceService {
                 existingItem.setTotal(itemTotal);
                 updatedItems.add(existingItem);
             } else {
-
+                // Create new item - CRITICAL: Set invoice relationship and ensure ID is null
                 InvoiceItem newItem = new InvoiceItem();
+                newItem.setId(null); // Explicitly set ID to null for new entities
+                newItem.setInvoice(existingInvoice); // Set the parent invoice relationship
                 newItem.setName(itemToUpdateDto.getName());
                 newItem.setQuantity(itemToUpdateDto.getQuantity());
                 newItem.setPrice(itemToUpdateDto.getPrice());

@@ -146,15 +146,7 @@ In this project we managed logs by utilizing Grafana Loki & Grafan Alloy. Grafan
 
 All these tools feed data into Grafana that allows us to visualize and analyze the data in a user-friendly way.
 
-
-### Logging with Loki+Alloy
-...
-### Metrics with Prometheus
-...
-### Traces with Tempo
-...
-
-**![observability-dashboard.png](docs/assets/observability-dashboard.png)**
+**![grafana-dashboard.gif](docs/assets/grafana-dashboard.gif)**
 
 ### Event Driven Model
 We've added a publisher/subscriber model using RabbitMQ to distributes events to our notification service.  Our Notification service handles events via spring cloud function that subscribes to the message queue.
