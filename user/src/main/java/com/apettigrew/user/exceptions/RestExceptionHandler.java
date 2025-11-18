@@ -57,6 +57,26 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(UserAlreadyExistsException exception){
+        ErrorResponse error = new ErrorResponse();
+        error.setStatus(HttpStatus.CONFLICT.value());
+        error.setMessage(exception.getMessage());
+        error.setTimeStamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(InvalidCredentialsException exception){
+        ErrorResponse error = new ErrorResponse();
+        error.setStatus(HttpStatus.BAD_REQUEST.value());
+        error.setMessage(exception.getMessage());
+        error.setTimeStamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleException(Exception exception){
         ErrorResponse error = new ErrorResponse();
         error.setStatus(HttpStatus.BAD_REQUEST.value());

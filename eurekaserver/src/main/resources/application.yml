@@ -3,7 +3,9 @@ spring:
     name: "eurekaserver"
   config:
     import: "optional:configserver:http://localhost:8071/"
-
+  profiles:
+    active:
+      - "local"
 management:
   endpoints:
     web:

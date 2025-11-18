@@ -1,19 +1,28 @@
+server:
+  port: ${SERVER_PORT:8072}
 spring:
   application:
     name: "gatewayserver"
+  profiles:
+    active:
+      - "local"
   config:
     import: "optional:configserver:http://localhost:8071/"
   cloud:
     gateway:
       discovery:
         locator:
-          enabled: false #allows gateway server to connect with eureka server to get all the details about the microservices
-          lowerCaseServiceId: true
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: "http://localhost:7080/realms/master/protocol/openid-connect/certs"
+          enabled: true #allows gateway server to connect with eureka server to get all the details about the microservices
+          lowerCaseServiceId: true # allow the service name to be accepted in lowercase
+      httpClient:
+          connect-timeout: 1000
+          response-timeout: 2s
+  data:
+    redis:
+      connect-timeout: 2s
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      timeout: 1s
 management:
   endpoints:
     web:
@@ -30,8 +39,8 @@ management:
       application: ${spring.application.name}
 info:
   app:
-    name: "gatewayserver"
-    description: "Apettigrew Gateway Server Application"
+    name: ${spring.application.name}
+    description: "SaaS Invoice MS Gateway Server Application"
     version: "1.0.0"
 
 logging:
@@ -39,5 +48,29 @@ logging:
     com:
       apettigrew:
         gatewayserver: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.web.server: DEBUG
+    org.springframework.cloud.gateway: DEBUG
   pattern:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+
+# configurations for the circuitbreaker pattern
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 10 #telling the pattern how many request you have to monitor for failure before turning the state to open from close
+      permittedNumberOfCallsInHalfOpenState: 2 #allow only 2 request in the half open state. Based on how this state is process it can decide to move to close or open.
+      waitDurationInOpenState: 10000
+      failureRateThreshold: 50 # i.e 50%, if 50% of request fail, move to the open state
+      registerHealthIndicator: true
+
+resilience4j.retry:
+  configs:
+    default:
+      maxAttempts: 3
+      waitDuration: 100
+      retryExceptions:
+        - org.springframework.web.client.HttpServerErrorException
+        - java.util.concurrent.TimeoutException
+        - java.io.IOException

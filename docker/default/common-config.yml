@@ -1,7 +1,7 @@
 services:
   network-deploy-service:
     networks:
-      - apettigrew
+      - invoice-saas-app
 
   microservice-db-config:
     extends:

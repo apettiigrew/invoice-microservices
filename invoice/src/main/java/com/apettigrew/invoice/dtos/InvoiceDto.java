@@ -1,8 +1,13 @@
 package com.apettigrew.invoice.dtos;
 
+import com.apettigrew.invoice.enums.InvoiceStatus;
 import com.apettigrew.invoice.jsonapi.ResourceDto;
+import com.apettigrew.invoice.validation.ValidInvoiceStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -12,6 +17,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -23,26 +29,26 @@ public class InvoiceDto implements ResourceDto<UUID> {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int id;
 
-    @NotNull(message = "User Id is required")
-    private String userId;
-
     @NotNull(message = "Payment due date is required")
+    @Future(message = "Payment due date must be in the future")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate paymentDue;
 
     @NotBlank(message = "Description is required")
+    @Size(min=10, max = 255, message = "Description needs to be between 10 and 255 characters")
     private String description;
 
     @NotNull(message = "Payment terms are required")
-    @Min(value = 0, message = "Payment terms must be non-negative") // Example: at least 0 days
+    @Min(value = 1, message = "Payment terms must be non-negative")
+    @Max(value = 24, message = "Payment terms cannot be more than 24 months")
     private Integer paymentTerms;
 
     @NotBlank(message = "Client name is required")
-    @Size(max = 255, message = "Client name cannot exceed 255 characters")
+    @Size(min=3,max = 255, message = "Client name needs to be between 3 and 255 characters")
     private String clientName;
 
     @NotBlank(message = "Client email is required")
     @Email(message = "Invalid client email format")
-    @Size(max = 255, message = "Client email cannot exceed 255 characters")
     private String clientEmail;
 
     @Valid
@@ -53,12 +59,18 @@ public class InvoiceDto implements ResourceDto<UUID> {
     @NotNull(message = "Client address is required")
     private AddressDto clientAddress;
 
-    @NotBlank(message = "Status is required")
-    @Size(max = 50, message = "Status cannot exceed 50 characters")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Status is required")
+    @ValidInvoiceStatus
+    private InvoiceStatus status;
 
-    @NotNull(message = "Total is required")
-    @DecimalMin(value = "0.00", message = "Total must be at least 0.00")
-    @Digits(integer = 8, fraction = 2, message = "Total format is invalid (e.g., 12345678.90)") // Adjust integer part as needed
+    // Total is calculated by the API from invoice items (qty * price for each, then sum)
+    // This field is read-only and should NOT be set by the user in requests
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private BigDecimal total;
+
+    @Valid
+    @NotNull(message = "Invoice items are required")
+    @Size(min = 1, message = "Invoice must have at least 1 invoice item")
+    private List<InvoiceItemDto> invoiceItems;
 }

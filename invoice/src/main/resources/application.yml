@@ -1,27 +1,18 @@
 server:
   port: 8080
-
 spring:
   application:
     name: "invoices"
   profiles:
     active:
-      - "default"
-  datasource:
-    url: jdbc:mysql://invoicedb:3306/invoicedb
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
+      - "local"
   jpa:
     hibernate:
-      ddl-auto: update   # options: none | validate | update | create | create-drop
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
-  sql:
-    init:
-      mode: always       # optiona
   config:
     import: "optional:configserver:http://localhost:8071/"
   cloud:

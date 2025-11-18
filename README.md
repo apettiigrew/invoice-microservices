@@ -1,5 +1,6 @@
 
-# Invoice Microservices App
+# SaaS Invoice Microservices App with SpringBoot, Docker, Kubernetes
+
 
 The Invoice microservice app is a simple invoice management app built to demonstrate the Microservices Architecture Pattern using SpringBoot, 
 Spring Cloud, Docker and Kubernetes. 
@@ -48,6 +49,30 @@ You are free to fork it and turn into something else or even provide cool update
 
 ## Tutorial overview
 https://code2tutorial.com/tutorial/66218165-f888-4dc1-bd18-ed3466c91ee9/index.md
+
+## Authentication and Authorization
+### Password Reset Flow
+
+1. **User requests password reset**
+  - Endpoint: `POST /auth/forgot-password`
+  - Payload: `{ "email": "user@example.com" }`
+
+2. **System processes request**
+  - Finds the user in Keycloak
+  - Sends a reset email to the user
+
+3. **User receives email**
+  - Email contains a **reset link** with a token/key
+
+4. **User submits new password**
+  - Endpoint: `POST /auth/reset-password`
+  - Payload: `{ "token": "reset-token", "newPassword": "NewPassword123!" }`
+
+5. **System validates token**
+  - Calls Keycloak REST API to **reset the password**
+  - Confirms success to the user
+
+
 
 ## Functional services
 
@@ -120,7 +145,8 @@ In this project we managed logs by utilizing Grafana Loki & Grafan Alloy. Grafan
 - Prometheus acts as our monitoring system that gives developers valuable insights into the health and performance of their software
 
 All these tools feed data into Grafana that allows us to visualize and analyze the data in a user-friendly way.
-**![observability-dashboard.png](docs/assets/observability-dashboard.png)**
+
+**![grafana-dashboard.gif](docs/assets/grafana-dashboard.gif)**
 
 ### Event Driven Model
 We've added a publisher/subscriber model using RabbitMQ to distributes events to our notification service.  Our Notification service handles events via spring cloud function that subscribes to the message queue.
@@ -136,6 +162,76 @@ We've added a publisher/subscriber model using RabbitMQ to distributes events to
 | **Prometheus**    | http://localhost:9090/targets                                   |
 | **Metrics**       | server_url/actuator/metrics <br> server_url/actuator/prometheus |
 
+### Resilience Patterns
+This project uses Resilience4j is a lightweight fault tolerance library designed for functional programming. Resilience4j provides higher-order functions (decorators) to enhance any functional interface, lambda expression or method reference with a Circuit Breaker, Rate Limiter, Retry or Bulkhead.
+
+https://resilience4j.readme.io/docs/getting-started
+#### Circuit breaker
+The circuit breaker is added in apigateway server. The Circuit Breaker pattern prevents system failures from \
+cascading when calling remote services. It monitors failures and, if a service fails repeatedly, it “trips” to fail fast and protect the system. Once the service recovers, calls are allowed again.
+```
+.route(p -> p
+    .path("/api/v1/invoices/**")
+    .filters(f -> f
+        .rewritePath("/petti/invoices/(?<segment>.*)", "/${segment}")
+        .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+        .circuitBreaker(config -> 
+            config.setName("invoicesCircuitBreaker"))
+    )
+    .uri("lb://INVOICES")
+)
+```
+#### Retry
+
+Retry logic automatically retries failed operations, typically for transient errors like network timeouts, to improve reliability and ensure successful execution without manual intervention.
+
+```
+.route(p -> p
+    .path("/api/v1/invoices/**")
+    .filters( f -> f.rewritePath("/petti/invoices/(?<segment>.*)","/${segment}")
+            .retry((retryConfig ->
+                    retryConfig.setRetries(2)
+                    .setMethods(HttpMethod.GET)
+                            .setBackoff(Duration.ofMillis(100),Duration.ofMillis(1000),2,true))))
+
+    .uri("lb://INVOICES"))
+```
+#### Rate Limiting
+Rate limiting controls how many requests a user or client can make to a service in a given time period. It prevents abuse, ensures fair usage, and protects system resources.
+```
+@Bean
+	public RouteLocator customRouteLocator(RouteLocatorBuilder routeLocatorBuilder) {
+		return routeLocatorBuilder.routes()
+          .route(p -> p
+            .path("/api/v1/invoices/**")
+            .filters( f -> f.rewritePath("/petti/invoices/(?<segment>.*)","/${segment}")
+              .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+              .circuitBreaker(config->config.setName("invoicesCircuitBreaker"))
+              .retry((retryConfig ->
+                      retryConfig.setRetries(2)
+                      .setMethods(HttpMethod.GET)
+                              .setBackoff(Duration.ofMillis(100),Duration.ofMillis(1000),2,true))))
+            .uri("lb://INVOICES"))
+        .route(p -> p
+            .path("/api/v1/users/**")
+            .filters( f -> f.rewritePath("/petti/users/(?<segment>.*)","/${segment}")
+              .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+              .requestRateLimiter(config ->
+                config.setRateLimiter(redisRateLimiter())
+                  .setKeyResolver(keyResolver())))
+            .uri("lb://USERS")).build();
+	}
+	
+@Bean
+public RedisRateLimiter redisRateLimiter(){
+    return new RedisRateLimiter(5,5,1);
+}
+
+@Bean
+public KeyResolver keyResolver(){
+    return exchange -> Mono.justOrEmpty(Objects.requireNonNull(exchange.getRequest().getRemoteAddress()).getAddress().getHostAddress());
+}
+```
 
 ### Kubernetes + Helm
 There are also helm charts created for each service in the ecosystem. 
@@ -143,3 +239,11 @@ The charts are located in the `helm` directory.
 
 ### Contributions are welcome!
 Invoice Microservice system is open source, and would greatly appreciate your help. Feel free to suggest and implement any improvements.
+
+
+### Database Migration
+
+
+```declarative
+mvn flyway:migrate
+```

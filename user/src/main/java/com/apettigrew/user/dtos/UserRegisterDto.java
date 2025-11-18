@@ -14,23 +14,19 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 public class UserRegisterDto implements ResourceDto<UUID> {
-    @NotNull(message = "Username is required")
+    @NotNull(message = "Email is required")
     @Size(max = 255, message ="This field can only be 255 characters long")
     private String email;
 
     @NotNull(message = "First name is required")
     @Size(max = 255, message ="This field can only be 255 characters long")
-    private String userName;
-
-    @NotNull(message = "First name is required")
-    @Size(max = 255, message ="This field can only be 255 characters long")
     private String firstName;
 
-    @NotNull(message = "First name is required")
+    @NotNull(message = "Last name is required")
     @Size(max = 255, message ="This field can only be 255 characters long")
     private String lastName;
 
     @NotNull(message = "Password is required")
-    @Size(max = 255, message ="This field can only be 255 characters long")
+    @Size(min = 8, max = 255, message = "Password must be between 8 and 255 characters")
     private String password;
 }
