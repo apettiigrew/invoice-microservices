@@ -3,8 +3,11 @@ package com.apettigrew.invoice.dtos;
 import com.apettigrew.invoice.enums.InvoiceStatus;
 import com.apettigrew.invoice.jsonapi.ResourceDto;
 import com.apettigrew.invoice.validation.ValidInvoiceStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -28,24 +31,24 @@ public class InvoiceDto implements ResourceDto<UUID> {
 
     @NotNull(message = "Payment due date is required")
     @Future(message = "Payment due date must be in the future")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate paymentDue;
 
     @NotBlank(message = "Description is required")
-    @Size(min=16, max = 255, message = "Description needs to be between 16 and 255 characters")
+    @Size(min=10, max = 255, message = "Description needs to be between 10 and 255 characters")
     private String description;
 
     @NotNull(message = "Payment terms are required")
     @Min(value = 1, message = "Payment terms must be non-negative")
-    @Max(value = 6, message = "Payment terms cannot be more than 6 months")
+    @Max(value = 24, message = "Payment terms cannot be more than 24 months")
     private Integer paymentTerms;
 
     @NotBlank(message = "Client name is required")
-    @Size(max = 255, message = "Client name cannot exceed 255 characters")
+    @Size(min=3,max = 255, message = "Client name needs to be between 3 and 255 characters")
     private String clientName;
 
     @NotBlank(message = "Client email is required")
     @Email(message = "Invalid client email format")
-    @Size(max = 255, message = "Client email cannot exceed 255 characters")
     private String clientEmail;
 
     @Valid
@@ -56,6 +59,7 @@ public class InvoiceDto implements ResourceDto<UUID> {
     @NotNull(message = "Client address is required")
     private AddressDto clientAddress;
 
+    @Enumerated(EnumType.STRING)
     @NotNull(message = "Status is required")
     @ValidInvoiceStatus
     private InvoiceStatus status;

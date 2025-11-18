@@ -22,10 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,18 +30,15 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class InvoiceService {
     private static final Logger log = LoggerFactory.getLogger(InvoiceService.class);
-
+    private final StreamBridge streamBridge;
     @Autowired
     private InvoiceRepository invoiceRepository;
-
-    private final StreamBridge streamBridge;
-
     @Autowired
     @Qualifier("skipNullModelMapper")
     private ModelMapper modelMapper;
 
     public Page<Invoice> getAllInvoices(String userId, Pageable pageable, InvoiceStatus status) {
-        if(status != null){
+        if (status != null) {
             return invoiceRepository.findByUserIdAndStatus(userId, status, pageable);
         }
 
@@ -53,7 +47,7 @@ public class InvoiceService {
 
     public Invoice getInvoiceById(Integer id, String userId) {
         return invoiceRepository.findByIdAndUserId(id, userId)
-                .orElseThrow(() -> new InvoiceNotFoundException("Invoice ID "+id+" not found"));
+                .orElseThrow(() -> new InvoiceNotFoundException("Invoice ID " + id + " not found"));
     }
 
     public Invoice createInvoice(InvoiceDto invoiceDto, String userId) {
@@ -65,19 +59,21 @@ public class InvoiceService {
         ObjectMapper objectMapper = new ObjectMapper();
         Invoice invoice = modelMapper.map(invoiceDto, Invoice.class);
         invoice.setUserId(userId);
-        
+
         // Calculate total from invoice items (qty * price for each, then sum)
-        // Note: We explicitly calculate and set the total, ignoring any value that may have been
-        // passed in the DTO (which should be null anyway due to @JsonProperty(access = READ_ONLY))
+        // Note: We explicitly calculate and set the total, ignoring any value that may
+        // have been
+        // passed in the DTO (which should be null anyway due to @JsonProperty(access =
+        // READ_ONLY))
         BigDecimal invoiceTotal = calculateInvoiceTotal(invoiceDto.getInvoiceItems());
         invoice.setTotal(invoiceTotal);
-        
+
         // Create and set invoice items
         List<InvoiceItem> invoiceItems = createInvoiceItems(invoiceDto.getInvoiceItems(), invoice);
         invoice.setInvoiceItems(invoiceItems);
-        
+
         Invoice savedInvoice;
-        
+
         try {
             invoice.setSenderAddress(objectMapper.writeValueAsString(invoiceDto.getSenderAddress()));
             invoice.setClientAddress(objectMapper.writeValueAsString(invoiceDto.getClientAddress()));
@@ -117,106 +113,121 @@ public class InvoiceService {
      * - Existing items not in the request: removes them
      */
     private List<InvoiceItem> updateInvoiceItems(
-            List<InvoiceItem> existingItems, 
-            List<InvoiceItemDto> itemDtos, 
-            Invoice invoice) {
-        
+            List<InvoiceItem> existingInvoiceItems,
+            List<InvoiceItemDto> invoiceItemsToUpdateDtos,
+            Invoice existingInvoice) {
+
         List<InvoiceItem> updatedItems = new ArrayList<>();
-        
-        // Create a map of existing items by ID for quick lookup
-        Map<Integer, InvoiceItem> existingItemsMap = new HashMap<>();
-        if (existingItems != null) {
-            for (InvoiceItem item : existingItems) {
-                existingItemsMap.put(item.getId(), item);
+
+        Map<Integer, InvoiceItem> existingInvoiceItemMap = new HashMap<>();
+        for (InvoiceItem item : existingInvoiceItems) {
+            existingInvoiceItemMap.put(item.getId(), item);
+        }
+        // Collect IDs from the request to identify which items should be kept
+        Set<Integer> existingItemIds = existingInvoiceItems.stream()
+                .map(InvoiceItem::getId)
+                .filter(id -> id != null && id > 0)
+                .collect(Collectors.toSet());
+
+        // Collect IDs from the request to identify which items should be kept
+        Set<Integer> requestedItemIds = invoiceItemsToUpdateDtos.stream()
+                .map(InvoiceItemDto::getId)
+                .filter(id -> id != null && id > 0)
+                .collect(Collectors.toSet());
+
+        // Soft delete items that exist but are not in the request
+        for (InvoiceItem existingItem : existingInvoiceItems) {
+            if (!requestedItemIds.contains(existingItem.getId())) {
+                existingItem.setDeletedAt(LocalDateTime.now());
             }
         }
-        
+
         // Process each item in the request
-        for (InvoiceItemDto itemDto : itemDtos) {
-            Integer itemId = itemDto.getId();
-            
-            if (itemId != null && itemId > 0 && existingItemsMap.containsKey(itemId)) {
+        for (InvoiceItemDto itemToUpdateDto : invoiceItemsToUpdateDtos) {
+            Integer itemId = itemToUpdateDto.getId();
+
+            if (itemId != null && itemId > 0 && existingItemIds.contains(itemId)) {
                 // Update existing item
-                InvoiceItem existingItem = existingItemsMap.get(itemId);
-                existingItem.setName(itemDto.getName());
-                existingItem.setQuantity(itemDto.getQuantity());
-                existingItem.setPrice(itemDto.getPrice());
+                InvoiceItem existingItem = existingInvoiceItemMap.get(itemId);
+                existingItem.setName(itemToUpdateDto.getName());
+                existingItem.setQuantity(itemToUpdateDto.getQuantity());
+                existingItem.setPrice(itemToUpdateDto.getPrice());
                 // Recalculate total
-                BigDecimal itemTotal = itemDto.getPrice().multiply(BigDecimal.valueOf(itemDto.getQuantity()));
+                BigDecimal itemTotal = itemToUpdateDto.getPrice()
+                        .multiply(BigDecimal.valueOf(itemToUpdateDto.getQuantity()));
                 existingItem.setTotal(itemTotal);
                 updatedItems.add(existingItem);
             } else {
-                
-                InvoiceItem newItem = modelMapper.map(itemDto, InvoiceItem.class);
 
-                newItem.setInvoice(invoice);
-                BigDecimal itemTotal = itemDto.getPrice().multiply(BigDecimal.valueOf(itemDto.getQuantity()));
+                InvoiceItem newItem = new InvoiceItem();
+                newItem.setName(itemToUpdateDto.getName());
+                newItem.setQuantity(itemToUpdateDto.getQuantity());
+                newItem.setPrice(itemToUpdateDto.getPrice());
+
+                BigDecimal itemTotal = itemToUpdateDto.getPrice()
+                        .multiply(BigDecimal.valueOf(itemToUpdateDto.getQuantity()));
                 newItem.setTotal(itemTotal);
                 updatedItems.add(newItem);
             }
         }
-        
+
         return updatedItems;
     }
 
     private void sendCommunication(Invoice invoice) {
-        var invoiceDto = modelMapper.map(invoice,InvoiceDto.class);
+        var invoiceDto = modelMapper.map(invoice, InvoiceDto.class);
 
         log.info("Sending Communication request for the details: {}", invoiceDto);
         var result = streamBridge.send("sendCommunication-out-0", invoiceDto);
         log.info("Is the Communication request successfully triggered ? : {}", result);
     }
 
-    public Invoice updateInvoice(Integer id, InvoiceDto invoiceDto, String userId) {
-        // Validate that invoice items are present
-        if (invoiceDto.getInvoiceItems() == null || invoiceDto.getInvoiceItems().isEmpty()) {
-            throw new IllegalArgumentException("Invoice must have at least 1 invoice item");
-        }
-
-        Invoice existingInvoice = invoiceRepository.findByIdAndUserId(id, userId)
-                .orElseThrow(() -> new InvoiceNotFoundException("Invoice ID "+id+" not found"));
-
-
-        int existingId = existingInvoice.getId();
-
-        // Update invoice properties
-        modelMapper.map(invoiceDto,existingInvoice);
-        existingInvoice.setId(existingId);
-
-        // Ensure userId is not overwritten
-        existingInvoice.setUserId(userId);
-
-        // Update invoice items intelligently based on IDs
-        List<InvoiceItem> updatedInvoiceItems = updateInvoiceItems(
-                existingInvoice.getInvoiceItems(), 
-                invoiceDto.getInvoiceItems(), 
-                existingInvoice
-        );
-
-        existingInvoice.setInvoiceItems(updatedInvoiceItems);
-
-        // calculate the new total invoices based on any updated invoice items
-        List<InvoiceItemDto> updatedInvoiceItemDtos = updatedInvoiceItems.stream().map((item) -> modelMapper.map(item, InvoiceItemDto.class)).collect(Collectors.toList());
-        
-        BigDecimal invoiceTotal = calculateInvoiceTotal(updatedInvoiceItemDtos);
-        existingInvoice.setTotal(invoiceTotal);
-        Invoice updatedInvoice;
-
+    public Invoice updateInvoice(Integer invoiceId, InvoiceDto invoiceDto, String userId) {
         try {
+            // Validate that invoice items are present
+            if (invoiceDto.getInvoiceItems() == null || invoiceDto.getInvoiceItems().isEmpty()) {
+                throw new IllegalArgumentException("Invoice must have at least 1 invoice item");
+            }
+
+            Invoice existingInvoice = invoiceRepository.findByIdAndUserId(invoiceId, userId)
+                    .orElseThrow(() -> new InvoiceNotFoundException("Invoice ID " + invoiceId + " not found"));
+
+            // Update invoice properties
+            existingInvoice.setPaymentDue(invoiceDto.getPaymentDue());
+            existingInvoice.setDescription(invoiceDto.getDescription());
+            existingInvoice.setPaymentTerms(invoiceDto.getPaymentTerms());
+            existingInvoice.setClientName(invoiceDto.getClientName());
+            existingInvoice.setClientEmail(invoiceDto.getClientEmail());
+            existingInvoice.setStatus(invoiceDto.getStatus());
             ObjectMapper objectMapper = new ObjectMapper();
             existingInvoice.setSenderAddress(objectMapper.writeValueAsString(invoiceDto.getSenderAddress()));
             existingInvoice.setClientAddress(objectMapper.writeValueAsString(invoiceDto.getClientAddress()));
-            updatedInvoice = invoiceRepository.save(existingInvoice);
+
+            // Update invoice items intelligently based on IDs
+            List<InvoiceItem> updatedInvoiceItems = updateInvoiceItems(
+                    existingInvoice.getInvoiceItems(),
+                    invoiceDto.getInvoiceItems(),
+                    existingInvoice);
+
+            existingInvoice.setInvoiceItems(updatedInvoiceItems);
+
+            // calculate the new total invoices based on any updated invoice items
+            List<InvoiceItemDto> updatedInvoiceItemDtos = updatedInvoiceItems.stream()
+                    .map((item) -> modelMapper.map(item, InvoiceItemDto.class)).collect(Collectors.toList());
+
+            BigDecimal invoiceTotal = calculateInvoiceTotal(updatedInvoiceItemDtos);
+            existingInvoice.setTotal(invoiceTotal);
+
+            return invoiceRepository.save(existingInvoice);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-       return updatedInvoice;
     }
 
     public void deleteInvoice(Integer id, String userId) {
         Invoice invoice = invoiceRepository.findByIdAndUserId(id, userId)
-                .orElseThrow(() -> new InvoiceNotFoundException("Invoice ID "+id+" not found"));
+                .orElseThrow(() -> new InvoiceNotFoundException("Invoice ID " + id + " not found"));
         invoice.setDeletedAt(LocalDateTime.now());
         invoiceRepository.save(invoice);
     }
