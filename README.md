@@ -128,16 +128,16 @@ All these tools feed data into Grafana that allows us to visualize and analyze t
 ### Event Driven Model
 We've added a publisher/subscriber model using RabbitMQ to distributes events to our notification service.  Our Notification service handles events via spring cloud function that subscribes to the message queue.
 
-### Important endpoints
-
-| **Service**       | **URL**                                                         |
-|-------------------|-----------------------------------------------------------------|
-| **Config Server** | http://localhost:8071/                                          |
-| **Keycloak Server** | http://localhost:7080/                                          |
-| **Eureka Server** | http://localhost:8070/                                          |
-| **Grafana**       | http://localhost:3000/                                          |
-| **Prometheus**    | http://localhost:9090/targets                                   |
-| **Metrics**       | server_url/actuator/metrics <br> server_url/actuator/prometheus |
+### Service endpoints
+| Service       | URL                       | Purpose                          |
+|---------------|----------------------------|----------------------------------|
+| API Gateway   | http://localhost:8072      | Main entry point for all API requests |
+| Keycloak      | http://localhost:7080      | Authentication & Authorization    |
+| Eureka Server | http://localhost:8070      | Service Discovery                |
+| Config Server | http://localhost:8071      | Centralized Configuration        |
+| Grafana       | http://localhost:3000      | Observability Dashboard          |
+| Prometheus    | http://localhost:9090      | Metrics Collection               |
+| RabbitMQ      | http://localhost:15672     | Message Queue Management         |
 
 ### Resilience Patterns
 This project uses Resilience4j is a lightweight fault tolerance library designed for functional programming. Resilience4j provides higher-order functions (decorators) to enhance any functional interface, lambda expression or method reference with a Circuit Breaker, Rate Limiter, Retry or Bulkhead.
