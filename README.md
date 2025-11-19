@@ -10,7 +10,7 @@ The Invoice Management System is a full-stack web application that enables users
 It’s designed with a focus on, microservices patterns, data validation, and state management best practices reflecting real-world billing workflows used by freelancers and small businesses.
 
 ## 🎯 Purpose
-The project is intended as a pure learning process to try out various concepts in a microservices and distributed environment.
+The project is a reference architecture built with Spring Cloud, Docker, and Kubernetes, intended to showcase how you can build resilient, scalable, cloud-native billing systems with concepts in a microservices and distributed environment.
 You are free to fork it and turn into something else or even provide cool updates via pull request. I'm happy to collab.
 
 ## Core Features
