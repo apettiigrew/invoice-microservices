@@ -50,29 +50,6 @@ You are free to fork it and turn into something else or even provide cool update
 ## Tutorial overview
 https://code2tutorial.com/tutorial/66218165-f888-4dc1-bd18-ed3466c91ee9/index.md
 
-## Authentication and Authorization
-### Password Reset Flow
-
-1. **User requests password reset**
-  - Endpoint: `POST /auth/forgot-password`
-  - Payload: `{ "email": "user@example.com" }`
-
-2. **System processes request**
-  - Finds the user in Keycloak
-  - Sends a reset email to the user
-
-3. **User receives email**
-  - Email contains a **reset link** with a token/key
-
-4. **User submits new password**
-  - Endpoint: `POST /auth/reset-password`
-  - Payload: `{ "token": "reset-token", "newPassword": "NewPassword123!" }`
-
-5. **System validates token**
-  - Calls Keycloak REST API to **reset the password**
-  - Confirms success to the user
-
-
 
 ## Functional services
 
@@ -247,3 +224,27 @@ Invoice Microservice system is open source, and would greatly appreciate your he
 ```declarative
 mvn flyway:migrate
 ```
+
+
+## Authentication and Authorization
+### Password Reset Flow
+
+1. **User requests password reset**
+- Endpoint: `POST /auth/forgot-password`
+- Payload: `{ "email": "user@example.com" }`
+
+2. **System processes request**
+- Finds the user in Keycloak
+- Sends a reset email to the user
+
+3. **User receives email**
+- Email contains a **reset link** with a token/key
+
+4. **User submits new password**
+- Endpoint: `POST /auth/reset-password`
+- Payload: `{ "token": "reset-token", "newPassword": "NewPassword123!" }`
+
+5. **System validates token**
+- Calls Keycloak REST API to **reset the password**
+- Confirms success to the user
+
